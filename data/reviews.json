@@ -1,0 +1,69 @@
+{
+  "_comment": "SINZU reviews. Add new reviews as objects in the array below and redeploy to publish. Reviews submitted via the site's Write a Review form are emailed to the owner (formatted for copy-paste) — moderate then paste here.",
+
+  "reviews": [
+    {
+      "productId": "*",
+      "reviewerName": "Ayana T.",
+      "rating": 5,
+      "title": "This is my third order",
+      "content": "I found $INZU at Northtown last year and haven't stopped shopping. Every piece feels intentional. The shipping was fast too.",
+      "date": "2026-06-14",
+      "verified": true
+    },
+    {
+      "productId": "*",
+      "reviewerName": "Marcus D.",
+      "rating": 5,
+      "title": "Real customer service",
+      "content": "Called with a question about my bonnet order and got an actual person. That doesn't happen much anymore. Product was exactly as described.",
+      "date": "2026-05-22",
+      "verified": true
+    },
+    {
+      "productId": "*",
+      "reviewerName": "Ife O.",
+      "rating": 4,
+      "title": "Beautiful, would order again",
+      "content": "Packaging felt premium. Only reason for 4 stars is I wish there were more color options — hopefully at Mall of America you'll expand!",
+      "date": "2026-04-30",
+      "verified": true
+    },
+    {
+      "productId": "jewelry:*",
+      "reviewerName": "Zara N.",
+      "rating": 5,
+      "title": "Wore it every day this month",
+      "content": "The gold tone hasn't faded at all. I get compliments constantly. Worth every dollar.",
+      "date": "2026-06-02",
+      "verified": true
+    },
+    {
+      "productId": "haircare:*",
+      "reviewerName": "Denise M.",
+      "rating": 5,
+      "title": "The satin is real",
+      "content": "You can tell the difference between cheap satin and the good stuff. This is the good stuff. My hair stays smooth all night.",
+      "date": "2026-05-18",
+      "verified": true
+    },
+    {
+      "productId": "skincare:*",
+      "reviewerName": "Rachel B.",
+      "rating": 5,
+      "title": "Cleared my skin up",
+      "content": "I've used African black soap from other brands and this one is authentic. Cleared up my breakouts within two weeks. Follow with the shea butter.",
+      "date": "2026-05-05",
+      "verified": true
+    },
+    {
+      "productId": "skincare:*",
+      "reviewerName": "Tomi A.",
+      "rating": 4,
+      "title": "Great scent, lasts a while",
+      "content": "The shea butter melts nicely on the skin and the vanilla amber scent is subtle, not overpowering. A little goes a long way.",
+      "date": "2026-06-08",
+      "verified": true
+    }
+  ]
+}
