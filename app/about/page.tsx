@@ -8,35 +8,69 @@ import AnnouncementBar from '@/components/AnnouncementBar';
 import { Star, Heart, Users, Sparkles, ArrowRight, BookOpen, Camera } from 'lucide-react';
 
 /* =========================================================
-   SINZU — About page
-
-   ⚠️ IMAGE PLACEHOLDERS: each dark block below has a visible
-   caption describing exactly what to shoot for that spot —
-   read it on the live page, then once you have the photo,
-   find the matching "Replace with:" comment in the code and
-   drop in an <img> tag pointing at your file.
+   SINZU — About page (Redesigned v2)
+   Editorial luxury aesthetic inspired by Exvia portfolio
    ========================================================= */
+
+/** Paste generated or real photo URLs here — each one appears
+ *  automatically everywhere it's used below. Leave blank to keep
+ *  showing the placeholder caption for that spot.
+ *
+ *  These five are real, free (non-Unsplash+) stock photos, filled in
+ *  as working placeholders so you can see the page with images in it.
+ *  Swap any of them for your own photography whenever you're ready —
+ *  same process, just replace the URL. Credit while these stay live:
+ *  heroBackdrop — Good Faces (unsplash.com/@goodfacesagency)
+ *  heroInset    — Jessica Felicio (unsplash.com/@jekafe)
+ *  story        — SumUp (unsplash.com/@sumup)
+ *  values       — Leighann Blackwood (unsplash.com/@ohleighann)
+ *  why          — Ruan Richard Rodrigues (unsplash.com/@ricdeoliveira)
+ */
+const IMAGE_URLS = {
+  heroBackdrop: 'https://images.unsplash.com/photo-1632765854612-9b02b6ec2b15?q=80&w=1600&auto=format&fit=crop',
+  heroInset: 'https://images.unsplash.com/photo-1539701938214-0d9736e1c16b?q=80&w=1200&auto=format&fit=crop',
+  story: 'https://images.unsplash.com/photo-1746723391801-1a24f7a57730?q=80&w=1600&auto=format&fit=crop',
+  values: 'https://images.unsplash.com/photo-1693004927824-f2623bbedc8b?q=80&w=1600&auto=format&fit=crop',
+  why: 'https://images.unsplash.com/photo-1650455221359-3aebf920bcc5?q=80&w=1600&auto=format&fit=crop',
+};
 
 /** The wordmark: S becomes a dollar sign, the one place gold shines. */
 function Sinzu({ className = '' }: { className?: string }) {
   return <span className={`gold-shimmer ${className}`}>$INZU</span>;
 }
 
-/** A reserved image spot: dark, textured, with a caption telling you
- *  exactly what to shoot. Swap the whole thing for a real <img> later. */
+/** A reserved image spot: shows a real photo once `src` is set, and
+ *  falls back to a dark placeholder with a caption telling you
+ *  exactly what to shoot/generate until then. */
 function ImageSlot({
   hint,
   path,
+  src,
   className = '',
   kenBurns = true,
 }: {
   hint: string;
   path: string;
+  src?: string;
   className?: string;
   kenBurns?: boolean;
 }) {
+  if (src) {
+    return (
+      <div className={`dark-panel relative overflow-hidden ${className}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={hint}
+          className={`w-full h-full object-cover grayscale contrast-110 transition-transform duration-[1400ms] ease-out ${
+            kenBurns ? 'scale-[1.08] group-[.visible]:scale-100' : ''
+          }`}
+        />
+      </div>
+    );
+  }
   return (
-    <div className={`dark-panel dark-weave relative overflow-hidden rounded-sm fade-up ${className}`}>
+    <div className={`dark-panel dark-weave relative overflow-hidden ${className}`}>
       <div
         className={`absolute inset-0 flex flex-col items-center justify-center text-center px-8 gap-3 transition-transform duration-[1400ms] ease-out ${
           kenBurns ? 'scale-[1.08] group-[.visible]:scale-100' : ''
@@ -46,7 +80,6 @@ function ImageSlot({
         <p className="text-[0.8rem] text-white/45 font-light leading-relaxed max-w-[280px]">{hint}</p>
         <p className="text-[0.65rem] tracking-[0.15em] uppercase text-[#D9B54E]/40">{path}</p>
       </div>
-      {/* Replace with: <img src="PATH" alt="..." className="w-full h-full object-cover" /> */}
     </div>
   );
 }
@@ -61,9 +94,15 @@ export default function AboutPage() {
           if (entry.isIntersecting) entry.target.classList.add('visible');
         });
       },
-      { threshold: 0.08 }
+      { threshold: 0.08, rootMargin: '0px 0px -50px 0px' }
     );
     document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+    // Trigger hero immediately
+    setTimeout(() => {
+      document.querySelector('.hero .fade-up')?.classList.add('visible');
+    }, 300);
+
     return () => observer.disconnect();
   }, []);
 
@@ -89,21 +128,26 @@ export default function AboutPage() {
     { icon: Sparkles, title: 'Elegance', desc: 'Luxury lives in simplicity and thoughtful design.' },
   ];
 
-  const heroWords = ['Luxury', 'Rooted', 'in'];
-
   return (
-    <main className="min-h-screen bg-white font-sans text-[#1A1A1A] antialiased selection:bg-[#D9B54E] selection:text-white">
+    <main className="min-h-screen bg-[#FAF8F5] font-sans text-[#1A1A1A] antialiased selection:bg-[#D9B54E] selection:text-white">
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+
         .fade-up {
           opacity: 0;
-          transform: translateY(50px) scale(0.98);
-          transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          transform: translateY(60px);
+          transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1), transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .fade-up.visible { opacity: 1; transform: translateY(0) scale(1); }
-        .delay-1 { transition-delay: 0.12s; }
-        .delay-2 { transition-delay: 0.24s; }
-        .delay-3 { transition-delay: 0.36s; }
-        .delay-4 { transition-delay: 0.48s; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        .word-reveal { display: inline-block; overflow: hidden; vertical-align: top; }
+        .word-reveal span {
+          display: inline-block;
+          transform: translateY(110%);
+          opacity: 0;
+          transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .fade-up.visible .word-reveal span { transform: translateY(0); opacity: 1; }
 
         .dark-panel { background-color: #14110C; }
         .dark-weave {
@@ -112,22 +156,18 @@ export default function AboutPage() {
             repeating-linear-gradient(-45deg, rgba(217,181,78,0.14) 0px, rgba(217,181,78,0.14) 1px, transparent 1px, transparent 13px);
         }
 
-        .gold-border { border: 1.5px solid #D9B54E; }
-        .gold-border-soft { border: 1px solid rgba(217, 181, 78, 0.3); }
-
         .gold-shimmer {
           background: linear-gradient(100deg, #C89B3C 15%, #E9C468 30%, #FFF6DC 45%, #FFFFFF 50%, #FFF6DC 55%, #E9C468 70%, #C89B3C 85%);
-          background-size: 180% auto;
+          background-size: 200% auto;
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
           color: transparent;
-          animation: shimmerSweep 7s ease-in-out infinite;
-          filter: drop-shadow(0 0 8px rgba(233, 196, 104, 0.2));
+          animation: shimmerSweep 8s ease-in-out infinite;
         }
         @keyframes shimmerSweep {
           0% { background-position: 0% center; }
-          100% { background-position: 180% center; }
+          100% { background-position: 200% center; }
         }
 
         .btn-gold {
@@ -147,34 +187,7 @@ export default function AboutPage() {
           border-radius: 9999px;
         }
         .btn-gold:hover::before { transform: scaleX(1); transform-origin: left; }
-        .btn-gold:hover { color: white; border-color: #D9B54E; }
-
-        .btn-dark {
-          position: relative;
-          overflow: hidden;
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn-dark::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: #1A1A1A;
-          transform: scaleX(0);
-          transform-origin: right;
-          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-          z-index: 0;
-          border-radius: 9999px;
-        }
-        .btn-dark:hover::before { transform: scaleX(1); transform-origin: left; }
-        .btn-dark:hover { color: white; border-color: #1A1A1A; }
-
-        .gold-line {
-          width: 0;
-          height: 2px;
-          background: #D9B54E;
-          transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .gold-line.visible { width: 60px; }
+        .btn-gold:hover { color: #14110C; border-color: #D9B54E; }
 
         .philosophy-card::before {
           content: '';
@@ -188,23 +201,13 @@ export default function AboutPage() {
         .philosophy-card:hover::before { transform: scaleX(1); }
 
         .quote-mark {
-          font-family: Georgia, serif;
+          font-family: 'Cormorant Garamond', Georgia, serif;
           line-height: 0.6;
         }
 
-        /* Word-by-word headline reveal */
-        .word-wrap { display: inline-block; overflow: hidden; vertical-align: top; }
-        .word-inner {
-          display: inline-block;
-          transform: translateY(110%);
-          opacity: 0;
-          transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .fade-up.visible .word-inner { transform: translateY(0); opacity: 1; }
-
         @media (prefers-reduced-motion: reduce) {
           .fade-up { opacity: 1 !important; transform: none !important; transition: none !important; }
-          .word-inner { opacity: 1 !important; transform: none !important; }
+          .word-reveal span { opacity: 1 !important; transform: none !important; }
           .gold-shimmer { animation: none; }
         }
       `}</style>
@@ -212,194 +215,287 @@ export default function AboutPage() {
       <AnnouncementBar />
       <Header />
 
-      {/* SECTION 1 — HERO */}
-      <section className="min-h-[85vh] flex items-center pt-20 md:pt-28 pb-16 px-6 md:px-12 lg:px-16">
-        <div className="max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      {/* =========================================================
+          SECTION 1 — HERO
+          Exvia-style: full-bleed backdrop photo, a sharper inset
+          portrait layered on top, floating corner tags, and the
+          brand's own name as the giant nameplate — since we're a
+          brand, $INZU stands where a person's name would.
+          ========================================================= */}
+      <section className="hero relative min-h-screen bg-[#14110C] flex items-end overflow-hidden">
+        {/* Full-bleed backdrop photo */}
+        <div className="absolute inset-0">
           <ImageSlot
-            hint="Founder or product hero shot, soft editorial lighting. Vertical orientation."
-            path="/about/hero.jpg"
-            className="h-[45vh] lg:h-[65vh] min-h-[350px] order-2 lg:order-1"
+            hint="Full-bleed portrait of the founder or a signature product — desaturated toward grayscale, softly out of focus. This is the backdrop the wordmark sits on."
+            path="/about/hero-backdrop.jpg"
+            src={IMAGE_URLS.heroBackdrop}
+            className="w-full h-full"
+            kenBurns={false}
           />
-          <div className="order-1 lg:order-2 lg:pl-8 fade-up">
-            <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-[#D9B54E]/40 bg-[#D9B54E]/[0.06]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D9B54E]" />
-              <span className="text-[0.7rem] tracking-[0.15em] uppercase font-semibold text-[#5C4A32]">5 Years of <Sinzu /></span>
-            </div>
-            <div className="gold-line mb-8" />
-            <h1 className="font-serif font-bold text-[clamp(2.5rem,5.5vw,4.5rem)] leading-[1.05] mb-6 text-[#1A1A1A] tracking-tight">
-              {heroWords.map((w, i) => (
-                <span key={w} className="word-wrap mr-[0.28em]">
-                  <span className="word-inner" style={{ transitionDelay: `${0.1 + i * 0.09}s` }}>{w}</span>
-                </span>
-              ))}
-              <span className="word-wrap">
-                <span className="word-inner gold-shimmer not-italic" style={{ transitionDelay: `${0.1 + heroWords.length * 0.09}s` }}>
-                  Culture.
-                </span>
-              </span>
-            </h1>
-            <p className="text-[#2E2A24] text-base md:text-[1.05rem] leading-[1.9] max-w-md mb-10 font-medium">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#14110C] via-[#14110C]/35 to-[#14110C]/70" />
+        </div>
+
+        {/* Inset sharp portrait — the layered "photo within a photo" moment */}
+        <div
+          className="absolute left-1/2 top-[12%] -translate-x-1/2 w-[200px] h-[270px] sm:w-[260px] sm:h-[350px] md:w-[300px] md:h-[400px] z-[5] fade-up"
+          style={{ transitionDelay: '0.15s' }}
+        >
+          <ImageSlot
+            hint="Sharp, in-focus close crop — founder portrait, or a hero product macro shot."
+            path="/about/hero-inset.jpg"
+            src={IMAGE_URLS.heroInset}
+            className="w-full h-full shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
+            kenBurns={false}
+          />
+        </div>
+
+        {/* Floating corner labels — Exvia style, recolored to our gold */}
+        <div className="absolute inset-0 pointer-events-none hidden lg:block z-[6]">
+          <span className="absolute top-[10%] left-[5%] text-[0.6rem] font-medium tracking-[0.2em] uppercase text-[#D9B54E]/70">
+            Beauty &middot; Jewelry &middot; Skincare
+          </span>
+          <span className="absolute top-[10%] right-[5%] text-[0.6rem] font-medium tracking-[0.2em] uppercase text-[#D9B54E]/70">
+            Blaine, Minnesota
+          </span>
+          <span className="absolute bottom-[26%] left-[5%] text-[0.6rem] font-medium tracking-[0.2em] uppercase text-white/45">
+            Since 2021
+          </span>
+          <span className="absolute bottom-[26%] right-[5%] text-[0.6rem] font-medium tracking-[0.2em] uppercase text-white/45">
+            Mall of America
+          </span>
+        </div>
+
+        {/* Giant nameplate, anchored to the bottom */}
+        <div className="relative z-10 w-full px-[5vw] pb-[7vh] fade-up">
+          <p className="text-[0.7rem] font-semibold tracking-[0.3em] uppercase text-white/50 mb-5">
+            Luxury Rooted in Culture
+          </p>
+          <h1
+            className="font-['Space_Grotesk'] font-bold gold-shimmer text-[clamp(4.5rem,16vw,12.5rem)] leading-[0.85] tracking-[-0.04em]"
+          >
+            $INZU
+          </h1>
+        </div>
+      </section>
+
+      {/* =========================================================
+          SECTION 2 — ABOUT (Asymmetric editorial, Exvia-style)
+          ========================================================= */}
+      <section className="relative z-10 py-[12vh] px-[5vw] bg-[#FAF8F5]">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-16 fade-up">
+          <div className="pt-2">
+            <span className="text-[0.65rem] font-medium tracking-[0.22em] uppercase text-[#8a7a6a]">
+              About
+            </span>
+          </div>
+          <div className="max-w-[560px]">
+            <p className="text-[1.05rem] leading-[1.85] font-normal text-[#1A1A1A] mb-6">
               SINZU is more than a beauty brand. It is a celebration of intentional living, quality craftsmanship, and products that honor culture while embracing modern luxury.
             </p>
-            <button
-              onClick={() => router.push('/shop')}
-              className="btn-gold inline-flex items-center gap-3 px-8 py-3.5 border border-[#D9B54E] rounded-full text-[11px] tracking-[0.18em] uppercase text-[#D9B54E] cursor-pointer font-medium"
-            >
-              <span className="relative z-10">Explore Our Collection</span>
-            </button>
+            <p className="text-[1.05rem] leading-[1.85] font-normal text-[#1A1A1A] mb-6">
+              Inspired by African heritage and elevated through contemporary design, every collection — jewelry, haircare, and skincare — reflects quality, simplicity, and quiet confidence.
+            </p>
+
+            {/* Stats row — bold grotesk numerals, like Exvia's 10+ / 40+ / 95% */}
+            <div className="mt-20 flex flex-col sm:flex-row gap-8 sm:gap-16 pt-12 border-t border-black/5">
+              <div className="flex flex-col gap-2">
+                <span className="font-['Space_Grotesk'] text-[2.8rem] font-bold leading-none text-[#1A1A1A]">
+                  5<span className="text-[#D9B54E] text-[1.6rem] align-top">+</span>
+                </span>
+                <span className="text-[0.6rem] font-medium tracking-[0.2em] uppercase text-[#8a7a6a]">Years of Beauty</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="font-['Space_Grotesk'] text-[2.8rem] font-bold leading-none text-[#1A1A1A]">
+                  3<span className="text-[#D9B54E] text-[1.6rem] align-top">+</span>
+                </span>
+                <span className="text-[0.6rem] font-medium tracking-[0.2em] uppercase text-[#8a7a6a]">Product Lines</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="font-['Space_Grotesk'] text-[2.8rem] font-bold leading-none text-[#1A1A1A]">2</span>
+                <span className="text-[0.6rem] font-medium tracking-[0.2em] uppercase text-[#8a7a6a]">Retail Locations</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 2 — OUR STORY */}
-      <section className="py-24 md:py-40 px-6 md:px-12 lg:px-16 bg-white">
-        <div className="max-w-[1300px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+      {/* =========================================================
+          SECTION 3 — OUR STORY (Split editorial)
+          ========================================================= */}
+      <section className="relative z-10 bg-white">
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[80vh]">
           <ImageSlot
             hint="Behind-the-scenes: making a SINZU piece, or the original Northtown Mall kiosk."
             path="/about/story.jpg"
-            className="h-[400px] md:h-[650px]"
+            src={IMAGE_URLS.story}
+            className="min-h-[40vh] lg:min-h-0"
           />
-          <div className="lg:pr-8 fade-up delay-1">
+          <div className="py-[10vh] px-[5vw] lg:pl-[6vw] flex flex-col justify-center fade-up">
             <span className="block text-[0.7rem] font-medium tracking-[0.25em] uppercase text-[#D9B54E] mb-6">
               Our Story
             </span>
-            <h2 className="font-serif font-bold text-[clamp(1.6rem,3.5vw,2.8rem)] leading-[1.1] mb-6">
-              Beauty, Reimagined
+            <h2 className="font-['Cormorant_Garamond'] text-[clamp(2rem,3.5vw,3.2rem)] font-normal leading-[1.15] mb-10 text-[#1A1A1A]">
+              Beauty,<br />Reimagined
             </h2>
-            <p className="text-[#2E2A24] text-[1.05rem] leading-[1.75] mb-5 font-medium">
+            <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32] mb-5">
               SINZU was created with one vision: to make everyday beauty feel intentional.
             </p>
-            <p className="text-[#2E2A24] text-[1.05rem] leading-[1.75] mb-5 font-medium">
+            <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32] mb-5">
               Inspired by African heritage and elevated through modern design, every collection — jewelry, haircare, and skincare — reflects quality, simplicity, and confidence.
             </p>
-            <p className="text-[#2E2A24] text-[1.05rem] leading-[1.75] mb-5 font-medium">
+            <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32] mb-5">
               Five years ago, we opened our first kiosk at Northtown Mall in Blaine, Minnesota. What started as a single storefront has grown into a community of everyday people who trust us with their self-care rituals.
             </p>
-            <p className="text-[#2E2A24] text-[1.05rem] leading-[1.75] font-medium">
+            <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32]">
               This August, we&apos;re expanding to Mall of America — a milestone that felt impossible when we started, and one we&apos;re proud to share with the community that made it possible.
             </p>
           </div>
         </div>
       </section>
 
-      {/* SECTION 2.5 — 5 YEAR MILESTONE */}
-      <section className="py-16 md:py-20 px-6 md:px-12 lg:px-16 bg-[#14110C] dark-weave text-center">
-        <div className="fade-up flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-          <span className="font-serif text-[clamp(3.5rem,9vw,6rem)] leading-none gold-shimmer font-bold">5</span>
-          <div className="text-left">
-            <p className="font-serif text-[1.3rem] md:text-[1.6rem] text-white leading-tight font-bold">
+      {/* =========================================================
+          SECTION 4 — 5 YEAR MILESTONE
+          ========================================================= */}
+      <section className="relative z-10 py-[6vh] px-[5vw] bg-[#14110C] text-center overflow-hidden">
+        <div className="dark-weave absolute inset-0" />
+        <div className="relative z-10 fade-up inline-flex flex-col md:flex-row items-center gap-6 md:gap-8">
+          <span className="font-['Cormorant_Garamond'] text-[clamp(4rem,10vw,7rem)] font-light leading-none gold-shimmer">5</span>
+          <div className="text-center md:text-left">
+            <p className="font-['Cormorant_Garamond'] text-[clamp(1.2rem,2vw,1.6rem)] text-white leading-tight font-normal">
               Years of Intentional Beauty
             </p>
-            <p className="text-[0.85rem] text-white/50 font-medium tracking-wide mt-1">
+            <p className="text-[0.8rem] text-white/40 font-light mt-2 tracking-wide">
               From one kiosk in Blaine to Mall of America — five years in the making.
             </p>
           </div>
         </div>
       </section>
 
-      {/* SECTION 3 — FOUNDER QUOTE */}
-      <section className="py-20 md:py-28 px-6 md:px-12 lg:px-16 bg-white">
-        <div className="max-w-[820px] mx-auto text-center fade-up">
-          <span className="quote-mark block text-[5rem] text-[#D9B54E] mb-2">&ldquo;</span>
-          <p className="font-serif text-[clamp(1.3rem,2.8vw,2rem)] leading-[1.5] text-[#1A1A1A] mb-8">
-            We didn&rsquo;t want to build another beauty brand. We wanted to build a ritual — one that carries where we come from into how people feel every day.
+      {/* =========================================================
+          SECTION 5 — FOUNDER QUOTE
+          ========================================================= */}
+      <section className="relative z-10 py-[14vh] px-[5vw] bg-white">
+        <div className="max-w-[720px] mx-auto text-center fade-up">
+          <span className="quote-mark block text-[6rem] text-[#D9B54E] opacity-50 mb-4">&ldquo;</span>
+          <p className="font-['Cormorant_Garamond'] text-[clamp(1.4rem,2.5vw,2rem)] font-normal italic leading-[1.55] text-[#1A1A1A] mb-10">
+            We didn&apos;t want to build another beauty brand. We wanted to build a ritual — one that carries where we come from into how people feel every day.
           </p>
-          <span className="block text-[0.75rem] tracking-[0.2em] uppercase text-[#5C4A32]">Founder, <Sinzu /></span>
+          <span className="block text-[0.7rem] font-medium tracking-[0.2em] uppercase text-[#8a7a6a]">Founder, <Sinzu /></span>
         </div>
       </section>
 
-      {/* SECTION 4 — OUR PHILOSOPHY */}
-      <section className="py-24 md:py-40 px-6 md:px-12 lg:px-16 bg-[#FAFAFA]">
-        <div className="text-center mb-16 md:mb-20 fade-up">
+      {/* =========================================================
+          SECTION 6 — OUR PHILOSOPHY
+          ========================================================= */}
+      <section className="relative z-10 py-[14vh] px-[5vw] bg-[#F5F2ED]">
+        <div className="text-center mb-20 fade-up">
           <span className="block text-[0.7rem] font-medium tracking-[0.25em] uppercase text-[#D9B54E] mb-6">
             Our Philosophy
           </span>
-          <h2 className="font-serif font-bold text-[clamp(1.6rem,3.5vw,2.8rem)] leading-[1.1]">
+          <h2 className="font-['Cormorant_Garamond'] text-[clamp(2rem,3.5vw,3rem)] font-normal leading-[1.15] text-[#1A1A1A]">
             What We Stand For
           </h2>
         </div>
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           {philosophyCards.map((card, i) => (
             <div
               key={card.title}
-              className="philosophy-card gold-border-soft relative p-10 md:p-12 bg-white rounded-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] fade-up"
-              style={{ transitionDelay: `${(i + 1) * 0.12}s` }}
+              className="philosophy-card relative p-10 md:p-12 bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(0,0,0,0.06)] fade-up"
+              style={{ transitionDelay: `${(i + 1) * 0.1}s` }}
             >
-              <div className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-[#D9B54E] rounded-tl-sm opacity-50" />
-              <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-[#D9B54E] rounded-br-sm opacity-50" />
-              <h3 className="font-serif text-[1.3rem] md:text-[1.5rem] font-bold mb-4">{card.title}</h3>
-              <p className="text-[0.95rem] text-[#2E2A24] leading-[1.7] font-medium">{card.body}</p>
+              <div className="absolute top-4 left-4 w-6 h-6 border-t-[1.5px] border-l-[1.5px] border-[#D9B54E] opacity-25 rounded-tl-sm" />
+              <div className="absolute bottom-4 right-4 w-6 h-6 border-b-[1.5px] border-r-[1.5px] border-[#D9B54E] opacity-25 rounded-br-sm" />
+              <h3 className="font-['Cormorant_Garamond'] text-[1.4rem] md:text-[1.5rem] font-medium mb-4 text-[#1A1A1A]">{card.title}</h3>
+              <p className="text-[0.9rem] text-[#5C4A32] leading-[1.75] font-normal">{card.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* SECTION 5 — OUR VALUES */}
-      <section className="py-24 md:py-40 px-6 md:px-12 lg:px-16 bg-white">
+      {/* =========================================================
+          SECTION 7 — OUR VALUES
+          ========================================================= */}
+      <section className="relative z-10 py-[14vh] px-[5vw] bg-white">
         <div className="max-w-[1300px] mx-auto">
           <ImageSlot
             hint="Lifestyle shot: someone using a SINZU product in their daily routine."
             path="/about/values.jpg"
-            className="w-full h-[300px] md:h-[500px] mb-16 md:mb-20"
+            src={IMAGE_URLS.values}
+            className="w-full h-[300px] md:h-[45vh] mb-24"
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
             {values.map((item, i) => (
-              <div key={item.title} className="text-center px-4 fade-up" style={{ transitionDelay: `${(i + 1) * 0.12}s` }}>
-                <div className="w-14 h-14 rounded-full gold-border flex items-center justify-center mx-auto mb-6 transition-all duration-400 hover:shadow-[0_0_20px_rgba(217,181,78,0.2)] hover:scale-105 bg-white">
+              <div key={item.title} className="text-center fade-up" style={{ transitionDelay: `${(i + 1) * 0.1}s` }}>
+                <div className="w-14 h-14 rounded-full border border-[rgba(217,181,78,0.35)] flex items-center justify-center mx-auto mb-6 transition-all duration-400 hover:shadow-[0_0_24px_rgba(217,181,78,0.15)] hover:scale-105 bg-white">
                   <item.icon className="w-5 h-5 text-[#D9B54E]" strokeWidth={1.2} />
                 </div>
-                <h4 className="font-serif font-bold text-[1.3rem] mb-3">{item.title}</h4>
-                <p className="text-[0.9rem] text-[#2E2A24] font-medium leading-relaxed">{item.desc}</p>
+                <h4 className="font-['Cormorant_Garamond'] font-medium text-[1.2rem] mb-3 text-[#1A1A1A]">{item.title}</h4>
+                <p className="text-[0.85rem] text-[#8a7a6a] font-normal leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SECTION 6 — WHY SINZU */}
-      <section className="py-24 md:py-40 px-6 md:px-12 lg:px-16 bg-white">
-        <div className="max-w-[1300px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-          <div className="fade-up">
+      {/* =========================================================
+          SECTION 8 — WHY SINZU (Reverse split)
+          ========================================================= */}
+      <section className="relative z-10 bg-[#FAF8F5]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[70vh]">
+          <div className="py-[10vh] px-[5vw] lg:pr-[6vw] flex flex-col justify-center fade-up order-2 lg:order-1">
             <span className="block text-[0.7rem] font-medium tracking-[0.25em] uppercase text-[#D9B54E] mb-6">Our Purpose</span>
-            <h2 className="font-serif font-bold text-[clamp(1.6rem,3.5vw,2.8rem)] leading-[1.1] mb-6">Why We Exist</h2>
-            <p className="text-[#2E2A24] text-[1.05rem] leading-[1.75] mb-5 font-medium max-w-md">
+            <h2 className="font-['Cormorant_Garamond'] text-[clamp(2rem,3.5vw,3.2rem)] font-normal leading-[1.15] mb-10 text-[#1A1A1A]">Why We Exist</h2>
+            <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32] mb-5 max-w-[480px]">
               <Sinzu /> exists to redefine everyday luxury through products that are intentional, culturally inspired, and beautifully crafted.
             </p>
-            <p className="text-[#2E2A24] text-[1.05rem] leading-[1.75] font-medium max-w-md">
+            <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32] max-w-[480px]">
               Whether skincare, haircare, or jewelry, every collection is created to make people feel confident in their own story.
             </p>
           </div>
           <ImageSlot
             hint="Close-up detail shot: texture, packaging, or a jewelry finish."
             path="/about/why.jpg"
-            className="h-[400px] md:h-[600px] delay-1"
+            src={IMAGE_URLS.why}
+            className="min-h-[40vh] lg:min-h-0 order-1 lg:order-2"
           />
         </div>
       </section>
 
-      {/* SECTION 7 — OUR STANDARD */}
-      <section className="relative py-32 md:py-48 px-6 md:px-12 lg:px-16 bg-[#14110C] text-center overflow-hidden dark-weave">
+      {/* =========================================================
+          SECTION 9 — OUR STANDARD
+          ========================================================= */}
+      <section className="relative z-10 py-[14vh] px-[5vw] bg-[#14110C] text-center overflow-hidden">
+        <div className="dark-weave absolute inset-0" />
         <div className="relative z-10 fade-up">
-          <h2 className="font-serif font-bold text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.2] text-white mb-2">Premium products.</h2>
-          <h2 className="font-serif font-bold text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.2] gold-shimmer italic mb-2">Intentional beauty.</h2>
-          <h2 className="font-serif font-bold text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.2] text-white">Timeless quality.</h2>
-          <div className="w-10 h-[2px] bg-[#D9B54E] mx-auto mt-10" />
+          <p className="font-['Cormorant_Garamond'] text-[clamp(2rem,4.5vw,3.5rem)] font-light leading-[1.25] text-white">Premium products.</p>
+          <p className="font-['Cormorant_Garamond'] text-[clamp(2rem,4.5vw,3.5rem)] font-normal italic leading-[1.25] gold-shimmer">Intentional beauty.</p>
+          <p className="font-['Cormorant_Garamond'] text-[clamp(2rem,4.5vw,3.5rem)] font-light leading-[1.25] text-white">Timeless quality.</p>
+          <div className="w-10 h-[1.5px] bg-[#D9B54E] mx-auto mt-10 opacity-60" />
         </div>
       </section>
 
-      {/* SECTION 8 — CLOSING CTA (now the page's landing point since the footer was removed) */}
-      <section className="relative py-28 md:py-44 px-6 md:px-12 lg:px-16 bg-[#14110C] dark-weave text-center overflow-hidden">
+      {/* =========================================================
+          SECTION 10 — CLOSING CTA
+          ========================================================= */}
+      <section className="relative z-10 py-[12vh] px-[5vw] bg-[#14110C] text-center overflow-hidden">
+        <div className="dark-weave absolute inset-0" />
         <div className="relative z-10 fade-up max-w-[600px] mx-auto">
           <span className="block text-[0.7rem] font-medium tracking-[0.25em] uppercase text-[#D9B54E] mb-6">The Collection</span>
-          <h2 className="font-serif font-bold text-[clamp(1.8rem,4vw,3rem)] leading-[1.15] mb-10 text-white">
+          <h2 className="font-['Cormorant_Garamond'] text-[clamp(1.8rem,4vw,2.8rem)] font-normal leading-[1.15] mb-12 text-white">
             Experience <Sinzu /> for Yourself
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={() => router.push('/shop')} className="btn-gold inline-flex items-center gap-3 px-10 py-4 border border-[#D9B54E] rounded-full text-[11px] tracking-[0.18em] uppercase text-[#D9B54E] cursor-pointer font-medium bg-transparent">
+            <button
+              onClick={() => router.push('/shop')}
+              className="btn-gold inline-flex items-center gap-3 px-10 py-4 border border-[#D9B54E] rounded-full text-[0.65rem] tracking-[0.18em] uppercase text-[#D9B54E] cursor-pointer font-medium bg-transparent"
+            >
               <span className="relative z-10">Shop Now</span>
               <ArrowRight className="w-4 h-4 relative z-10" strokeWidth={1.5} />
             </button>
-            <button onClick={() => router.push('/journal')} className="inline-flex items-center gap-2 px-10 py-4 text-[11px] tracking-[0.18em] uppercase text-white/60 hover:text-white transition-colors cursor-pointer font-medium">
+            <button
+              onClick={() => router.push('/journal')}
+              className="inline-flex items-center gap-2 px-10 py-4 text-[0.65rem] tracking-[0.18em] uppercase text-white/50 hover:text-white transition-colors cursor-pointer font-medium"
+            >
               <BookOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
               Read the Journal
             </button>
