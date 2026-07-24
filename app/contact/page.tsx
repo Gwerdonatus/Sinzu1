@@ -7,32 +7,22 @@ import ChatWidget from '@/components/ChatWidget';
 import AnnouncementBar from '@/components/AnnouncementBar';
 import { Clock, Mail, Instagram, ArrowRight, Plus, MapPin, Navigation } from 'lucide-react';
 
-/* =========================================================
-   SINZU — Contact page
-
-   ⚠️ REPLACE BEFORE SHIPPING:
-   - STORE_LOCATIONS below: put in the real mall name(s),
-     address(es), and a Google Maps query for each. The
-     "mapQuery" just needs to be whatever you'd type into
-     Google Maps search — a full address or "Mall Name, City"
-     both work fine with the embed used here.
-   ========================================================= */
-
 const STORE_LOCATIONS = [
   {
-    name: 'SINZU — Flagship',
-    address: 'Replace with mall name & full address',
-    mapQuery: 'Replace with mall name, city, country',
+    name: 'SINZU — Northtown Mall',
+    address: 'Northtown Mall, Blaine, MN 55434',
+    mapQuery: 'Northtown Mall, Blaine, MN 55434',
+    appleMapsUrl: 'https://maps.apple/p/eY9vZhDy0HVa_T',
   },
   {
-    name: 'SINZU — Second Location',
-    address: 'Replace with mall name & full address',
-    mapQuery: 'Replace with mall name, city, country',
+    name: 'SINZU — Mall of America',
+    address: 'Mall of America, Bloomington, MN 55425',
+    mapQuery: 'Mall of America, Bloomington, MN',
+    appleMapsUrl: 'https://maps.apple/p/w6QdLfcnvbkArR',
+    note: 'Opens Aug 10, 2026',
   },
 ];
 
-/** The wordmark: S becomes a dollar sign. This is the one place gold is
- *  allowed to shine — a slow metallic sweep, not a static fill. */
 function Sinzu({ className = '' }: { className?: string }) {
   return <span className={`gold-shimmer ${className}`}>$INZU</span>;
 }
@@ -48,7 +38,7 @@ const FAQS = [
   },
   {
     q: 'Do you restock sold-out items?',
-    a: 'Popular pieces are restocked regularly. Follow @sinzu.llc on Instagram or join our email list — restocks are announced there first.',
+    a: 'Popular pieces are restocked regularly. Follow @sinzu.world on Instagram or join our email list — restocks are announced there first.',
   },
   {
     q: 'Can I change or cancel my order?',
@@ -86,7 +76,7 @@ export default function ContactPage() {
 
   const location = STORE_LOCATIONS[activeLocation];
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&output=embed`;
-  const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.mapQuery)}`;
+  const directionsHref = location.appleMapsUrl;
 
   return (
     <main className="min-h-screen bg-white font-sans text-[#1A1A1A] antialiased selection:bg-[#D9B54E] selection:text-white">
@@ -98,8 +88,6 @@ export default function ContactPage() {
         }
         .fade-up.visible { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* Gold now shows up only as: the wordmark shimmer, thin borders,
-           and small eyebrow labels — never as a large flat fill. */
         .gold-border { border: 1.5px solid #D9B54E; }
         .gold-border-soft { border: 1px solid rgba(217, 181, 78, 0.3); }
 
@@ -118,8 +106,6 @@ export default function ContactPage() {
           100% { background-position: 180% center; }
         }
 
-        /* Dark surfaces replace the old flat cream (#F5F0E8) fills —
-           this is where "black gold" actually reads as black + gold. */
         .dark-panel { background-color: #14110C; }
         .dark-weave {
           background-image:
@@ -217,7 +203,6 @@ export default function ContactPage() {
           </div>
           <div className="h-[38vh] lg:h-[55vh] min-h-[300px] rounded-sm dark-panel dark-weave fade-up relative overflow-hidden" style={{ transitionDelay: '0.1s' }}>
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/40 to-transparent" />
-            {/* Replace with: <img src="/contact/hero.jpg" alt="SINZU studio" className="w-full h-full object-cover" /> */}
           </div>
         </div>
       </section>
@@ -228,9 +213,9 @@ export default function ContactPage() {
           <span className="block text-[0.7rem] font-medium tracking-[0.25em] uppercase text-[#D9B54E] mb-6">
             Reach Us
           </span>
-          <h2 className="font-serif text-[clamp(1.6rem,3.5vw,2.8rem)] leading-[1.1]">Three Ways In</h2>
+          <h2 className="font-serif text-[clamp(1.6rem,3.5vw,2.8rem)] leading-[1.1]">Ways In</h2>
         </div>
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             {
               icon: Clock,
@@ -249,15 +234,28 @@ export default function ContactPage() {
             {
               icon: Instagram,
               title: 'Instagram',
-              value: '@sinzu.llc',
+              value: '@sinzu.world',
               sub: 'DMs, restock news, and your tags.',
-              href: 'https://instagram.com/sinzu.llc',
+              href: 'https://www.instagram.com/sinzu.world?utm_source=qr',
+            },
+            {
+              icon: null,
+              title: 'TikTok',
+              value: '@sinzu.world',
+              sub: 'Behind the scenes and drops.',
+              href: 'https://www.tiktok.com/@sinzu.world?_r=1&_t=ZS-98HgTiA8HRP',
             },
           ].map((item, i) => {
             const inner = (
               <>
                 <div className="w-14 h-14 rounded-full gold-border flex items-center justify-center mx-auto mb-6 bg-white">
-                  <item.icon className="w-5 h-5 text-[#D9B54E]" strokeWidth={1.2} />
+                  {item.icon ? (
+                    <item.icon className="w-5 h-5 text-[#D9B54E]" strokeWidth={1.2} />
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-[#D9B54E]">
+                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                    </svg>
+                  )}
                 </div>
                 <h3 className="font-serif text-[1.3rem] mb-2">{item.title}</h3>
                 <p className="text-[0.95rem] text-[#1A1A1A] mb-2">{item.value}</p>
@@ -286,7 +284,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* SECTION 2.5 — FIND US IN STORE: real map + storefront photos */}
+      {/* SECTION 2.5 — FIND US IN STORE */}
       <section className="py-24 md:py-36 px-6 md:px-12 lg:px-16 dark-panel dark-weave relative overflow-hidden">
         <div className="max-w-[1300px] mx-auto relative z-10">
           <div className="text-center mb-14 md:mb-16 fade-up">
@@ -306,14 +304,13 @@ export default function ContactPage() {
                     activeLocation === i ? 'text-[#D9B54E] border-[#D9B54E]' : 'text-white/40 border-transparent hover:text-white/70'
                   }`}
                 >
-                  {loc.name}
+                  {loc.name.replace('SINZU — ', '')}
                 </button>
               ))}
             </div>
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            {/* Real, embedded Google Map */}
             <div className="fade-up rounded-sm overflow-hidden gold-border-soft h-[320px] md:h-[420px]" style={{ transitionDelay: '0.1s' }}>
               <iframe
                 title={`Map to ${location.name}`}
@@ -326,7 +323,6 @@ export default function ContactPage() {
               />
             </div>
 
-            {/* Address + storefront photos */}
             <div className="fade-up flex flex-col gap-6" style={{ transitionDelay: '0.2s' }}>
               <div className="flex items-start gap-4">
                 <div className="w-11 h-11 rounded-full gold-border flex items-center justify-center shrink-0 bg-transparent">
@@ -335,6 +331,9 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-serif text-[1.15rem] text-white mb-1">{location.name}</h3>
                   <p className="text-[0.9rem] text-white/60 font-light leading-relaxed">{location.address}</p>
+                  {location.note && (
+                    <p className="text-[0.8rem] text-[#D9B54E]/80 font-light mt-1">{location.note}</p>
+                  )}
                 </div>
               </div>
 
@@ -345,7 +344,7 @@ export default function ContactPage() {
                 className="btn-light inline-flex items-center gap-3 self-start px-8 py-3.5 border border-[#D9B54E] rounded-full text-[11px] tracking-[0.18em] uppercase text-[#D9B54E] cursor-pointer font-medium bg-transparent"
               >
                 <Navigation className="w-4 h-4 relative z-10" strokeWidth={1.5} />
-                <span className="relative z-10">Get Directions</span>
+                <span className="relative z-10">Open in Maps</span>
               </a>
             </div>
           </div>
@@ -355,10 +354,7 @@ export default function ContactPage() {
       {/* SECTION 3 — MESSAGE FORM */}
       <section className="py-24 md:py-40 px-6 md:px-12 lg:px-16 bg-white">
         <div className="max-w-[1300px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
-          <div className="h-[320px] md:h-[560px] rounded-sm dark-panel dark-weave fade-up relative overflow-hidden lg:sticky lg:top-28">
-            {/* Replace with: <img src="/contact/form.jpg" alt="SINZU products" className="w-full h-full object-cover" /> */}
-          </div>
-
+          <div className="h-[320px] md:h-[560px] rounded-sm dark-panel dark-weave fade-up relative overflow-hidden lg:sticky lg:top-28" />
           <div className="fade-up">
             <span className="block text-[0.7rem] font-medium tracking-[0.25em] uppercase text-[#D9B54E] mb-6">
               Write to Us

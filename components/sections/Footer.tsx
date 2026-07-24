@@ -53,15 +53,8 @@ export default function Footer() {
           -webkit-text-fill-color: transparent;
           animation: goldShimmer 6s ease-in-out infinite alternate;
         }
-
-        .pay-icon {
-          height: 22px;
-          filter: brightness(0) invert(0.1);
-          opacity: 0.55;
-        }
       `}</style>
 
-      {/* Base */}
       <div
         className="absolute inset-0"
         style={{
@@ -81,9 +74,7 @@ export default function Footer() {
       <div className="relative z-10 h-[1px] bg-gradient-to-r from-transparent via-[#fffdf0]/40 to-transparent" />
 
       <div className="relative z-10 px-6 py-16 max-w-[1200px] mx-auto">
-        {/* Top: 4-column info grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-12 mb-14">
-          {/* Shop */}
           <div>
             <h3 className="font-body text-[10px] font-medium tracking-[0.3em] uppercase text-[#1a1200]/70 mb-6">Shop</h3>
             <div className="flex flex-col gap-3">
@@ -95,40 +86,30 @@ export default function Footer() {
                 { label: 'Best Sellers', href: '/collections/best-sellers' },
                 { label: 'Sale', href: '/collections/sale' },
               ].map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="font-body text-[13px] font-light text-[#1a1200]/70 hover:text-[#1a1200] transition-colors duration-500 w-fit tracking-wide"
-                >
+                <Link key={item.label} href={item.href} className="font-body text-[13px] font-light text-[#1a1200]/70 hover:text-[#1a1200] transition-colors duration-500 w-fit tracking-wide">
                   {item.label}
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Company */}
           <div>
             <h3 className="font-body text-[10px] font-medium tracking-[0.3em] uppercase text-[#1a1200]/70 mb-6">Company</h3>
             <div className="flex flex-col gap-3">
               {[
                 { label: 'About Us', href: '/about' },
                 { label: 'Visit Our Stores', href: '/visit' },
-                { label: 'Mall of America', href: '/visit' },
+                { label: 'Mall of America', href: 'https://maps.apple/p/w6QdLfcnvbkArR' },
                 { label: 'FAQ', href: '/faq' },
                 { label: 'Contact Us', href: '/contact' },
               ].map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="font-body text-[13px] font-light text-[#1a1200]/70 hover:text-[#1a1200] transition-colors duration-500 w-fit tracking-wide"
-                >
+                <Link key={item.label} href={item.href} className="font-body text-[13px] font-light text-[#1a1200]/70 hover:text-[#1a1200] transition-colors duration-500 w-fit tracking-wide">
                   {item.label}
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Help */}
           <div>
             <h3 className="font-body text-[10px] font-medium tracking-[0.3em] uppercase text-[#1a1200]/70 mb-6">Help</h3>
             <div className="flex flex-col gap-3">
@@ -138,28 +119,28 @@ export default function Footer() {
                 { label: 'Terms of Service', href: '/terms' },
                 { label: 'Privacy Policy', href: '/terms' },
               ].map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="font-body text-[13px] font-light text-[#1a1200]/70 hover:text-[#1a1200] transition-colors duration-500 w-fit tracking-wide"
-                >
+                <Link key={item.label} href={item.href} className="font-body text-[13px] font-light text-[#1a1200]/70 hover:text-[#1a1200] transition-colors duration-500 w-fit tracking-wide">
                   {item.label}
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Contact & Social */}
           <div>
             <h3 className="font-body text-[10px] font-medium tracking-[0.3em] uppercase text-[#1a1200]/70 mb-6">Contact</h3>
             <div className="flex flex-col gap-3.5">
-              <div className="flex items-start gap-2 text-[12px] text-[#1a1200]/75 leading-relaxed">
+              <a
+                href="https://maps.apple/p/eY9vZhDy0HVa_T"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2 text-[12px] text-[#1a1200]/75 leading-relaxed hover:text-[#1a1200] transition-colors"
+              >
                 <MapPin size={14} className="shrink-0 mt-0.5" />
                 <div>
                   <div className="font-medium text-[#1a1200]/85">Northtown Mall</div>
                   <div>Blaine, MN 55434</div>
                 </div>
-              </div>
+              </a>
               <div className="flex items-start gap-2 text-[12px] text-[#1a1200]/75 leading-relaxed">
                 <MapPin size={14} className="shrink-0 mt-0.5" />
                 <div>
@@ -177,13 +158,10 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Newsletter */}
         <div className="mb-12 pb-12 border-b border-[#1a1200]/15">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <div className="max-w-md">
-              <h3 className="font-editorial text-2xl md:text-3xl italic mb-2 text-[#1a1200]">
-                Join The Community
-              </h3>
+              <h3 className="font-editorial text-2xl md:text-3xl italic mb-2 text-[#1a1200]">Join The Community</h3>
               <p className="font-body text-[13px] text-[#1a1200]/70 leading-relaxed">
                 Get 10% off your first order with code <strong>WELCOME10</strong> when you subscribe.
               </p>
@@ -199,34 +177,20 @@ export default function Footer() {
                   disabled={status === 'loading'}
                   className="flex-1 bg-transparent font-body text-[13px] placeholder:text-[#1a1200]/40 focus:outline-none text-[#1a1200] py-1 tracking-wide"
                 />
-                <button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  aria-label="Subscribe"
-                  className="w-9 h-9 flex items-center justify-center hover:opacity-60 transition-opacity"
-                >
+                <button type="submit" disabled={status === 'loading'} aria-label="Subscribe" className="w-9 h-9 flex items-center justify-center hover:opacity-60 transition-opacity">
                   <ArrowRight size={16} className="text-[#1a1200]/70" />
                 </button>
               </div>
-              {status === 'success' && (
-                <p className="text-[11px] text-[#1a1200]/70 mt-2">Welcome — check your inbox for your code.</p>
-              )}
-              {status === 'error' && (
-                <p className="text-[11px] text-[#7a1e1e] mt-2">Something went wrong — please try again.</p>
-              )}
+              {status === 'success' && <p className="text-[11px] text-[#1a1200]/70 mt-2">Welcome — check your inbox for your code.</p>}
+              {status === 'error' && <p className="text-[11px] text-[#7a1e1e] mt-2">Something went wrong — please try again.</p>}
             </form>
           </div>
         </div>
 
-        {/* Brand mark + social + payment icons */}
         <div className="grid md:grid-cols-3 gap-8 items-center mb-8">
           <div>
-            <div className="font-editorial text-4xl md:text-5xl tracking-[0.12em] gold-shine-text">
-              $INZU
-            </div>
-            <p className="font-body text-[11px] font-light text-[#1a1200]/55 tracking-[0.14em] mt-1">
-              @sinzu.llc
-            </p>
+            <div className="font-editorial text-4xl md:text-5xl tracking-[0.12em] gold-shine-text">$INZU</div>
+            <p className="font-body text-[11px] font-light text-[#1a1200]/55 tracking-[0.14em] mt-1">@sinzu.llc</p>
           </div>
 
           <div className="flex justify-center gap-4">
@@ -234,27 +198,33 @@ export default function Footer() {
               className="w-10 h-10 rounded-full border border-[#1a1200]/25 flex items-center justify-center hover:border-[#1a1200]/60 hover:bg-[#1a1200]/5 transition-all duration-500">
               <Facebook size={14} className="text-[#1a1200]/70" />
             </Link>
-            <Link href="https://instagram.com/sinzu.llc" target="_blank" aria-label="Instagram"
+
+            <Link
+              href="https://www.tiktok.com/@sinzu.world?_r=1&_t=ZS-98HgTiA8HRP"
+              target="_blank"
+              aria-label="TikTok"
+              className="w-10 h-10 rounded-full border border-[#1a1200]/25 flex items-center justify-center hover:border-[#1a1200]/60 hover:bg-[#1a1200]/5 transition-all duration-500"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-[#1a1200]/70">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+            </Link>
+
+            <Link href="https://www.instagram.com/sinzu.world?utm_source=qr" target="_blank" aria-label="Instagram"
               className="w-10 h-10 rounded-full border border-[#1a1200]/25 flex items-center justify-center hover:border-[#1a1200]/60 hover:bg-[#1a1200]/5 transition-all duration-500">
               <Instagram size={14} className="text-[#1a1200]/70" />
             </Link>
           </div>
 
           <div className="flex md:justify-end items-center gap-2 flex-wrap">
-            {/* SVG payment method badges */}
             {['Visa', 'Mastercard', 'Amex', 'Apple Pay', 'Google Pay', 'Discover'].map((name) => (
-              <span
-                key={name}
-                title={name}
-                className="text-[9px] font-medium tracking-[0.14em] uppercase px-2.5 py-1.5 rounded border border-[#1a1200]/25 text-[#1a1200]/65 bg-[#1a1200]/5"
-              >
+              <span key={name} title={name} className="text-[9px] font-medium tracking-[0.14em] uppercase px-2.5 py-1.5 rounded border border-[#1a1200]/25 text-[#1a1200]/65 bg-[#1a1200]/5">
                 {name}
               </span>
             ))}
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="border-t border-[#1a1200]/15 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="font-body text-[10px] font-light text-[#1a1200]/50 tracking-[0.14em]">
             © {new Date().getFullYear()} SINZU LLC · A Minnesota-registered brand · All rights reserved.
