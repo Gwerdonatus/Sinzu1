@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "node scripts/seed-sandbox.js"
+    "seed": "node scripts/seed-sandbox.js",
+    "check-token": "node scripts/check-square-token.js"
   },
   "dependencies": {
     "@types/uuid": "^9.0.0",
