@@ -13,9 +13,38 @@ import { Product, ProductVariation } from '@/types';
 const PLACEHOLDER_IMAGE = '/images/placeholder-product.svg';
 
 // Small in-memory cache so browsing the site doesn't hammer the
-// Square API. Stock/product changes appear within CACHE_TTL_MS.
-const CACHE_TTL_MS = 60 * 1000; // 1 minute
+// Square API. Anything added or edited in the Square app appears on
+// the site within CACHE_TTL_MS of the next page load — kept short so
+// the shop reads as "post it and it's live".
+const CACHE_TTL_MS = 15 * 1000; // 15 seconds
 let cache: { products: Product[]; fetchedAt: number } | null = null;
+
+/**
+ * Why an item in the Square catalog did not make it onto the storefront.
+ * Surfaced by /api/square/health so "my product isn't showing" has an answer.
+ */
+export interface SkippedItem {
+  id: string;
+  name: string;
+  reason: string;
+}
+let lastSkipped: SkippedItem[] = [];
+export function getSkippedItems(): SkippedItem[] {
+  return lastSkipped;
+}
+
+/**
+ * Square objects can be scoped to specific locations. An item that isn't
+ * present at our location has no inventory and can't be ordered there, so
+ * it must not appear on the site.
+ */
+function availableAtLocation(obj: any): boolean {
+  if (!LOCATION_ID) return true;
+  if (obj.presentAtAllLocations) {
+    return !(obj.absentAtLocationIds ?? []).includes(LOCATION_ID);
+  }
+  return (obj.presentAtLocationIds ?? []).includes(LOCATION_ID);
+}
 
 export async function fetchProducts(forceFresh = false): Promise<Product[]> {
   if (!forceFresh && cache && Date.now() - cache.fetchedAt < CACHE_TTL_MS) {
@@ -31,7 +60,38 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
     cursor = result.cursor ?? undefined;
   } while (cursor);
 
-  const items = objects.filter((o) => o.type === 'ITEM' && !o.isDeleted);
+  // Only items that are actually sellable on this site. Anything filtered
+  // out is recorded with a reason so the health endpoint can explain it.
+  const skipped: SkippedItem[] = [];
+  const items = objects.filter((o) => {
+    if (o.type !== 'ITEM') return false;
+    const d = o.itemData ?? {};
+    const label = { id: o.id, name: d.name ?? '(unnamed)' };
+
+    if (o.isDeleted) return false; // deleted in Square — not worth reporting
+    if (d.isArchived) {
+      skipped.push({ ...label, reason: 'Archived in Square. Unarchive it to sell online.' });
+      return false;
+    }
+    // Square's "Site visibility" control. Unset means the item predates the
+    // setting or was created in the POS app — treat that as visible.
+    if (d.ecomVisibility === 'PRIVATE' || d.ecomVisibility === 'UNAVAILABLE') {
+      skipped.push({
+        ...label,
+        reason: `Square site visibility is ${d.ecomVisibility}. Set it to Visible to sell online.`,
+      });
+      return false;
+    }
+    if (!availableAtLocation(o)) {
+      skipped.push({
+        ...label,
+        reason: `Not available at location ${LOCATION_ID}. Enable this item for that location in Square.`,
+      });
+      return false;
+    }
+    return true;
+  });
+
   const imagesById = new Map<string, string>();
   const categoriesById = new Map<string, string>();
 
@@ -66,21 +126,37 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
   }
 
   // 3) Map Square items -> UI products.
-  const products: Product[] = items.map((item) => {
+  const products: (Product | null)[] = items.map((item) => {
     const d = item.itemData!;
 
-    const variations: ProductVariation[] = (d.variations ?? []).map((v: any) => {
-      const vd = v.itemVariationData ?? {};
-      const tracked = inventoryByVariation.has(v.id);
-      return {
-        id: v.id,
-        name: vd.name || 'One size',
-        price: Number(vd.priceMoney?.amount ?? 0),
-        // Untracked variations are shown as available (999) so items
-        // without inventory tracking can still be purchased.
-        inventory: tracked ? inventoryByVariation.get(v.id)! : 999,
-      };
-    });
+    const variations: ProductVariation[] = (d.variations ?? [])
+      // A variation with no priceMoney uses Square's "Variable" pricing —
+      // the cashier types the price at the register. There is no price to
+      // show or charge online, so it can't be listed.
+      .filter((v: any) => v.itemVariationData?.priceMoney?.amount != null)
+      .map((v: any) => {
+        const vd = v.itemVariationData ?? {};
+        const tracked = inventoryByVariation.has(v.id);
+        return {
+          id: v.id,
+          name: vd.name || 'One size',
+          price: Number(vd.priceMoney.amount),
+          // Untracked variations are shown as available (999) so items
+          // without inventory tracking can still be purchased.
+          inventory: tracked ? inventoryByVariation.get(v.id)! : 999,
+        };
+      });
+
+    if (variations.length === 0) {
+      skipped.push({
+        id: item.id,
+        name: d.name ?? '(unnamed)',
+        reason:
+          'No variation has a fixed price (Square "Variable" pricing). ' +
+          'Set a price on the item in Square to sell it online.',
+      });
+      return null;
+    }
 
     const prices = variations.map((v) => v.price).filter((p) => p > 0);
     const minPrice = prices.length ? Math.min(...prices) : 0;
@@ -143,8 +219,18 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
     };
   });
 
-  cache = { products, fetchedAt: Date.now() };
-  return products;
+  const sellable = products.filter((p): p is Product => p !== null);
+
+  lastSkipped = skipped;
+  if (skipped.length) {
+    console.warn(
+      `[catalog] ${skipped.length} Square item(s) hidden from the storefront:\n` +
+        skipped.map((s) => `  - ${s.name}: ${s.reason}`).join('\n')
+    );
+  }
+
+  cache = { products: sellable, fetchedAt: Date.now() };
+  return sellable;
 }
 
 export async function fetchProductById(id: string): Promise<Product | null> {

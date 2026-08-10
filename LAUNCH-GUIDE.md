@@ -1,262 +1,226 @@
-# SINZU × Square — Launch Guide
+# SINZU — Production Launch Guide
 
-Everything's built. This is your full checklist to go live.
-
----
-
-## What's now in the build
-
-### Pages
-- **Home** — announcement bar, hero, category panels, trust bar, featured, best sellers, MOA milestone section (with live countdown), body banner, connect, show looks, video, email signup
-- **Shop** — live Square catalog with category tabs (Jewelry / Haircare / Skincare / Sale), URL-aware search
-- **Product pages** — variation-driven pricing/stock, gallery, category-specific detail accordions, ratings summary, related products, **customer reviews**, recently viewed
-- **Collections** — dynamic category pages (`/collections/jewelry`, `/haircare`, `/skincare`, `/best-sellers`, `/sale`)
-- **About** — 5-year story + Northtown → MOA expansion
-- **FAQ** — client's exact copy in accordion format
-- **Visit Us** — Northtown Mall + Mall of America with Google Maps embeds
-- **Contact / Terms / Refund / Shipping Info** — policy pages
-- **Cart / Checkout** — full Square payment flow with discount code
-
-### Payments & Checkout
-- Square Web Payments SDK (card + Apple Pay ready)
-- Server-side re-pricing from live catalog (no client tampering possible)
-- **Discount codes**: `MOA15` (15% off), `WELCOME10` (10% off first order) — server-validated
-- Shipping fulfillment attached to Square order (address flows to Dashboard → Orders)
-
-### Emails (Resend — see setup below)
-- **Order confirmation** to customer (branded, with logo)
-- **New order notification** to owner (`OWNER_EMAIL`)
-- **Welcome email** with WELCOME10 code on newsletter signup
-- **Review submission** notification to owner for moderation
-
-### Reviews System
-- Customer reviews on product pages (star ratings, verified buyer badge, dates)
-- "Write a Review" form → moderated via email → owner adds to `data/reviews.json`
-- 7 seed reviews already in place (brand + category-level)
-
-### SEO & Social Sharing
-- Favicon set (16/32/48/96/180/192/512 + `.ico`)
-- Apple touch icon
-- `og-image.png` (1200×630) for social sharing with logo + tagline
-- Web manifest for install-to-home-screen
-- `robots.txt` + dynamic `sitemap.xml`
-- JSON-LD structured data (Store schema with both locations)
-- Per-page titles, meta descriptions, canonical URLs
-- Open Graph + Twitter Card tags on every page
+You're deploying to real customers with real money. Follow this in order — takes ~30 minutes total.
 
 ---
 
-## Step 1 — Test locally in sandbox
+## ⚠️ First: Rotate your Resend API key
 
-```bash
-npm install         # first time only
-npm run seed        # populates sandbox with 22 test products
-npm run dev         # http://localhost:3000
-```
+Your previous Resend key was shared with third parties (assistant + zip file). Even if the risk is low, best practice is to rotate it before launch:
 
-### Test cards (sandbox)
-
-| Card | Number | Result |
-|---|---|---|
-| Visa | `4111 1111 1111 1111` | Approved |
-| Mastercard | `5105 1051 0510 5100` | Approved |
-| Declined | `4000 0000 0000 0002` | Declined |
-
-Any future expiry, any CVV, any ZIP.
-
-### Testing checklist
-
-- [ ] Announcement bar cycles through 3 messages (MOA / free shipping / MOA15)
-- [ ] Homepage sections all render in order
-- [ ] Category panels link to `/collections/jewelry`, `/skincare`, `/haircare`
-- [ ] MOA countdown updates in real-time
-- [ ] Shop page filter tabs work
-- [ ] Search from header → `/shop?q=`
-- [ ] Product page shows category-specific accordions
-- [ ] Reviews display (seed reviews should appear)
-- [ ] Submit a review — check console for the log (email will send once RESEND_API_KEY is set)
-- [ ] Add to cart → apply MOA15 → total drops 15% → pay with test card
-- [ ] Order confirmation email logs to console (until Resend is configured)
-- [ ] Order appears in Sandbox Dashboard → Orders with discount + shipping address
-- [ ] Recently viewed shows after visiting 2+ products
-- [ ] Favicons show in browser tab
-- [ ] Share the URL in a messaging app — should show OG preview with logo
+1. Go to https://resend.com/api-keys
+2. Delete the old key
+3. Create a new one → copy it
+4. You'll paste it into Vercel in Step 3 below
 
 ---
 
-## Step 2 — Set up Resend for emails
+## Step 1 — Get your Square Production keys
 
-1. Sign up at [resend.com](https://resend.com) (free tier: 3,000 emails/month)
-2. Add domain `sinzu.shop` in Resend Dashboard
-3. Add the DNS records Resend gives you (SPF + DKIM + verification) — same DNS panel as your domain registrar / Cloudflare
-4. Once verified, click "API Keys" → "Create API Key" → copy it
+1. Go to https://developer.squareup.com/apps
+2. Open your SINZU app
+3. In the top-left tab dropdown, switch from **Sandbox** to **Production**
+4. Copy three values from the Credentials page:
+   - **Access Token** (starts with `EAAA...`)
+   - **Application ID** (starts with `sq0idp-...`)
+5. Get your Production **Location ID**:
+   - Go to https://squareup.com/dashboard/locations
+   - Click your location → copy the Location ID at the top (e.g., `L...`)
 
-Add to `.env.local` (and Vercel env vars):
-
-```bash
-RESEND_API_KEY=re_YOUR_KEY_HERE
-MAIL_FROM="SINZU <hello@sinzu.shop>"
-MAIL_REPLY_TO=hello@sinzu.shop
-OWNER_EMAIL=hello@sinzu.shop
-```
-
-That's it. Order confirmations, welcome emails, and review submissions will start flowing.
-
-**Set up hello@sinzu.shop** — use Cloudflare Email Routing (free) to forward `hello@sinzu.shop` to your personal Gmail so customer replies reach you. Instructions: cloudflare.com/products/email-routing.
+Keep these five values in a notes app for the next step:
+- Access Token
+- Application ID
+- Location ID
+- (Environment is always `production`)
 
 ---
 
-## Step 3 — Switch to Square Production
+## Step 2 — Add real products to Square
 
-1. [developer.squareup.com](https://developer.squareup.com/apps) → your app → **Production** tab
-2. Copy: Access Token, Application ID, Location ID
-3. Update these in **Vercel** → Settings → Environment Variables:
+Sandbox test products won't come with you to production. In your production Square Dashboard:
 
-```bash
-SQUARE_ACCESS_TOKEN=<production token>
-SQUARE_ENVIRONMENT=production
-NEXT_PUBLIC_SQUARE_APPLICATION_ID=<production app id>
-NEXT_PUBLIC_SQUARE_LOCATION_ID=<production location id>
-NEXT_PUBLIC_SQUARE_ENVIRONMENT=production
-NEXT_PUBLIC_SITE_URL=https://sinzu.shop
-```
+1. https://squareup.com/dashboard/items/library
+2. **Delete any sandbox-carried items** if any snuck through
+3. **Add each real product**:
+   - Name, description, category (`Jewelry`, `Haircare`, or `Skincare` — case-insensitive)
+   - Add variations if the item has sizes/options (each variation = one SKU with its own price and stock)
+   - Upload photos (first photo is the primary card image)
+   - Set inventory quantity per variation
 
-4. Redeploy.
+**Badge tags** (put at start of description, they get stripped from display):
+- `[NEW]` → gold "New" badge
+- `[BESTSELLER]` → "Best Seller" badge (also feeds homepage Best Sellers)
+- `[SALE:4200]` → shows original $42.00 crossed out (value in cents)
 
-**Do NOT** run `npm run seed` against production. Add real products in the production Square Dashboard.
+Multiple tags allowed: `[BESTSELLER][SALE:6500] Hand-crafted…`
+
+**How long until a new product appears on the site:** about 15 seconds. The site caches the
+Square catalog briefly so it is not hitting the API on every page view. To see a change
+immediately, load `/api/products?fresh=1` once, then refresh the site.
+
+**A product must meet all of these to appear on the site.** `/api/square/health` tells you
+which one an item is failing:
+- Not archived in Square
+- Online site visibility not set to Private/Unavailable
+- Enabled for your store location
+- At least one variation with a **fixed price** — Square's "Variable" pricing has no amount
+  to display or charge, so those items can't be listed online
+- A category set, otherwise it only appears under **Shop All** (the nav links to Jewelry,
+  Haircare, Skincare, Best Sellers and Sale — a product in any other category is still
+  reachable from Shop All and by direct link, just not from the top nav)
 
 ---
 
-## Step 4 — Add real products in Square Dashboard
+## Step 3 — Set Vercel environment variables
 
-For each product:
-1. Square Dashboard → Items & Services → Create Item
-2. Set Name, Description, Category (`Jewelry`, `Haircare`, `Skincare` — matcher is fuzzy)
-3. Add variations (sizes) with prices
-4. Upload photo(s)
-5. Set inventory
-6. Save
+1. Go to Vercel Dashboard → your Sinzu1 project → **Settings** → **Environment Variables**
+2. **Delete all existing sandbox variables** (Square + Resend if present)
+3. Add these ten variables. For each, click "Add New", paste values, tick **Production + Preview + Development**, Save:
 
-### Badge tags in the description
-
-Prefix the description with these tags (they're stripped from display):
-
-| Tag | Effect |
+| Name | Value |
 |---|---|
-| `[NEW]` | Gold "New" badge |
-| `[BESTSELLER]` | Gradient "Best Seller" badge · appears in homepage Best Sellers |
-| `[SALE:4200]` | Shows original price of $42.00 crossed out (in cents) |
-
-Multiple tags allowed: `[BESTSELLER][SALE:4200] Rest of description...`
-
----
-
-## Step 5 — Reviews moderation
-
-Customer reviews land in your inbox as pre-formatted JSON.
-
-To publish:
-1. Open `data/reviews.json`
-2. Paste the review JSON block (already formatted in the email) into the `reviews` array
-3. Set `verified: true` if you can confirm they bought
-4. Commit and redeploy
-
-Reviews with `"productId": "*"` show on **every** product page.
-Reviews with `"productId": "jewelry:*"` show on all jewelry products.
-Reviews with `"productId": "<Square item ID>"` show on that specific product.
+| `SQUARE_ACCESS_TOKEN` | (production access token from Step 1) |
+| `SQUARE_ENVIRONMENT` | `production` |
+| `NEXT_PUBLIC_SQUARE_APPLICATION_ID` | (production app ID from Step 1) |
+| `NEXT_PUBLIC_SQUARE_LOCATION_ID` | (production location ID from Step 1) |
+| `NEXT_PUBLIC_SQUARE_ENVIRONMENT` | `production` |
+| `RESEND_API_KEY` | (your new Resend key from top of this doc) |
+| `MAIL_FROM` | `SINZU <hello@sinzu.shop>` |
+| `MAIL_REPLY_TO` | `hello@sinzu.shop` |
+| `OWNER_EMAIL` | `hello@sinzu.shop` |
+| `NEXT_PUBLIC_SITE_URL` | `https://sinzu.shop` |
 
 ---
 
-## Step 6 — Domain (sinzu.shop)
+## Step 4 — Push code and deploy
 
-1. Vercel Dashboard → your project → Settings → Domains → Add `sinzu.shop` and `www.sinzu.shop`
-2. Vercel gives you DNS records — add them at your registrar / Cloudflare
-3. Wait ~5 min for DNS propagation
+```bash
+cd path/to/sinzu-website-v3
+git add .
+git commit -m "Production launch"
+git push origin main
+```
+
+Vercel auto-deploys in ~2 minutes. Watch the deploy at Vercel Dashboard → Deployments.
+
+If the build fails, click the failed deployment → **Build Logs** → paste the red error line and I'll fix it.
 
 ---
 
-## Step 7 — Optional polish
+## Step 5 — Point sinzu.shop to Vercel
 
-- **Google Analytics 4** — send us your GA4 measurement ID and we'll wire it in
-- **Real product photography** — the biggest lever for conversion
-- **Category card photos** — swap `/public/collections/jewelries.png`, `/skin-care.png`, `/hair-care.png` with real campaign shots
-- **Instagram / Facebook** — update the URLs in `components/sections/Footer.tsx` to real profiles
+If not already done:
+
+1. Vercel → Settings → **Domains** → Add `sinzu.shop` and `www.sinzu.shop`
+2. Vercel shows you DNS records (A record + CNAME)
+3. Add them in Cloudflare (Cloudflare Dashboard → sinzu.shop → **DNS → Records** → Add each)
+4. For the A record, turn the proxy status to **DNS only** (grey cloud) or leave proxied — either works
+5. Wait 5–10 minutes for DNS propagation
+
+Once done, https://sinzu.shop should load your live site.
+
+---
+
+## Step 6 — Verify Resend is sending
+
+1. Go to https://resend.com/domains → confirm `sinzu.shop` shows ✅ Verified
+2. If not verified, add the DNS records Resend shows into Cloudflare (SPF + DKIM + DMARC). Make sure they're **DNS only** (grey cloud), not proxied.
+3. Once verified, your emails will send from `hello@sinzu.shop`
+
+---
+
+## Step 7 — End-to-end test with a real card
+
+Once deployed, do one live test:
+
+1. Open https://sinzu.shop in an incognito window
+2. Sign up for the newsletter at the footer → check your inbox for the WELCOME10 email
+3. Add an item to cart → checkout with a **real credit card** for a **small amount** (a $1 test item works)
+4. Verify:
+   - [ ] Order confirmation email lands in your inbox (customer copy)
+   - [ ] New order notification email lands in your inbox (owner copy — same address if `OWNER_EMAIL=hello@sinzu.shop`)
+   - [ ] Order appears in https://squareup.com/dashboard/orders with shipping address
+   - [ ] Money appears in your Square balance (production, not sandbox)
+5. Refund the test in Square Dashboard immediately if you want your dollar back
+
+---
+
+## Managing reviews (ongoing)
+
+Reviews come in two ways — both go to your inbox:
+
+- **In-site form**: customer clicks "Review" on a product page → submits → you get an email
+- **Email**: customer clicks "or email us instead" → emails `reviews@sinzu.shop` → you get it via Cloudflare forwarding
+
+To publish a review:
+1. Open the moderation email — it contains a pre-formatted JSON block (or copy from the customer's plain-text email)
+2. Open `data/reviews.json` locally
+3. Paste the JSON object into the `"reviews": []` array
+4. Set `"verified": true` if you can confirm they bought
+5. Commit + push:
+   ```bash
+   git add data/reviews.json
+   git commit -m "Add review"
+   git push
+   ```
+6. Vercel redeploys in 90 seconds and the review appears
+
+To delete a review: remove its JSON object from the array, commit + push.
+
+**Scope keys** control where a review shows:
+- `"productId": "<square-item-id>"` — that product only
+- `"productId": "*"` — every product page
+- `"productId": "jewelry:*"` — all jewelry products
+- `"productId": "haircare:*"` — all haircare
+- `"productId": "skincare:*"` — all skincare
 
 ---
 
 ## Discount codes
 
-Managed in `lib/discounts.ts`:
+Edit `lib/discounts.ts` to add/remove codes. Currently active:
 
-| Code | Discount |
-|---|---|
-| `MOA15` | 15% off (Mall of America business cards) |
-| `WELCOME10` | 10% off first order (email signup) |
+- `MOA15` — 15% off (Mall of America business card promo)
+- `WELCOME10` — 10% off first order (email signup incentive)
 
-To add codes: edit `lib/discounts.ts` → redeploy.
-
-Discounts appear as line items on Square orders → trackable in your Square Dashboard reports.
+Discounts appear as line items on Square orders → trackable in Square reports.
 
 ---
 
-## File tree — what's where
+## Fulfilling orders (day-to-day)
 
-```
-app/
-  api/
-    products/          Live Square catalog feed
-    inventory/         Live stock levels
-    square/payment/    Checkout (order + payment + emails)
-    discount/validate/ Discount preview
-    subscribe/         Email signup (+ welcome email)
-    reviews/           Reviews GET + POST (moderated)
-  faq/                 FAQ (client's copy)
-  visit/               Northtown + MOA + Google Maps
-  terms/refund/shipping-info/  Policy pages
-  sitemap.ts           Dynamic SEO sitemap
-  layout.tsx           SEO + OG + JSON-LD
+- **Pickup orders**: Square Dashboard → Orders → filter to "Pickup" → mark "Prepared" → customer gets Square's built-in pickup-ready email automatically
+- **Shipping orders**: Square Dashboard → Orders → filter to "Shipment" → print packing slip → add tracking number when you ship → mark "Completed" → customer gets Square's tracking email automatically
 
-components/sections/
-  MOASection.tsx       Milestone with countdown
-  TrustBar.tsx         Trust indicators
-  BestSellers.tsx      Best sellers grid
-  EmailSignup.tsx      Newsletter form
-  RecentlyViewed.tsx   Per-user recently viewed
-  ProductReviews.tsx   Reviews + write-a-review form
-  Footer.tsx           4-col footer w/ locations, socials, payment icons
-
-data/
-  reviews.json         Reviews (moderation happens here)
-
-lib/
-  square.ts            Server-side Square client
-  catalog.ts           Products + inventory + badge tag parsing
-  discounts.ts         Discount codes (edit here)
-  shipping.ts          Shipping methods (edit here)
-  email/
-    send.ts            Resend integration
-    shell.ts           Branded email HTML shell
-    templates.ts       Order / welcome / owner / review emails
-  recentlyViewed.ts    localStorage helper
-
-public/
-  favicon.ico, apple-touch-icon.png, og-image.png
-  favicons/            Multi-size favicons
-  site.webmanifest, robots.txt
-  sinzu-logo.png, sinzu-logo-square.png
-
-scripts/
-  seed-sandbox.js      One-command test catalog seeding
-```
+You can integrate **Shippo** or **ShipStation** with Square later for cheaper postage — they pull Square orders in automatically, no code changes.
 
 ---
 
-## If something breaks
+## If something breaks after launch
 
-- **Emails aren't sending** → Check `RESEND_API_KEY` is set in Vercel env vars. Console logs `[email:disabled]` when the key is missing.
-- **Discount code says "not valid"** → Check `lib/discounts.ts` — the code has to match exactly (case-insensitive).
-- **Products aren't showing** → Check Square Dashboard → item is Available for Sale + has stock + has a category assigned.
-- **OG image not showing on social** → Facebook Sharing Debugger (developers.facebook.com/tools/debug/) → "Scrape Again" to bust the cache.
-- **Vercel build fails on fonts** → this only happens locally with restricted network; Vercel has internet access so builds succeed there.
+Send me a screenshot of:
+- The error the customer sees, OR
+- The Vercel build log red text, OR
+- The Square Dashboard order that looks wrong
 
-Send a screenshot for anything else and I'll fix it same-day.
+**First stop for anything Square-related:** open `/api/square/health` on the site
+(e.g. https://sinzu.shop/api/square/health). It checks the credentials, the location,
+the catalog read, and lists any product in Square that is *not* showing on the site
+along with the reason why. It never exposes your access token.
+
+Common quick fixes:
+- **Products don't load / "Failed to load products from Square"** → open `/api/square/health`.
+  A 401 there means `SQUARE_ACCESS_TOKEN` is from the wrong environment (a sandbox token
+  cannot read the production catalog) or has been revoked. All four Square values must come
+  from the same environment.
+- **A product is in Square but not on the site** → `/api/square/health` lists it under
+  `hiddenItems` with the reason (archived, hidden from the online site, not enabled for your
+  location, or priced as "Variable" instead of a fixed amount).
+- **"Missing SQUARE_ACCESS_TOKEN"** → env var didn't save in Vercel; re-add and redeploy
+- **Emails not sending** → Resend domain not verified, or key expired; check https://resend.com/domains
+- **Payment says "declined"** on a good card → sandbox key still in production env; verify all env vars say `production`
+- **404s on collection pages** → item category name in Square doesn't match `jewelry`/`haircare`/`skincare` (matcher is fuzzy, but check it)
+
+---
+
+Good luck. 🎉
