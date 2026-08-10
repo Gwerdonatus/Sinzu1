@@ -59,6 +59,32 @@ export function configProblems(): string[] {
   return problems;
 }
 
+/**
+ * A one-way fingerprint of the access token currently in use, so a deploy
+ * can be checked against a known-bad token without ever exposing the token
+ * itself. Twelve hex characters of SHA-256 — not reversible, and useless to
+ * anyone who obtains it.
+ */
+export function tokenFingerprint(): { sha256: string; length: number } | null {
+  const token = process.env.SQUARE_ACCESS_TOKEN;
+  if (!token) return null;
+  // require() rather than a top-level import: this file is also pulled into
+  // contexts where node:crypto isn't worth loading unless asked for.
+  const { createHash } = require('crypto') as typeof import('crypto');
+  return {
+    sha256: createHash('sha256').update(token).digest('hex').slice(0, 12),
+    length: token.length,
+  };
+}
+
+/** Which build is actually serving the request, per Vercel's injected vars. */
+export function deploymentInfo() {
+  return {
+    commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? null,
+    vercelEnv: process.env.VERCEL_ENV ?? null,
+  };
+}
+
 let _client: Client | null = null;
 
 export function getSquareClient(): Client {

@@ -14,6 +14,8 @@ import {
   SQUARE_ENV,
   configProblems,
   explainSquareError,
+  tokenFingerprint,
+  deploymentInfo,
 } from '@/lib/square';
 import { fetchProducts, getSkippedItems } from '@/lib/catalog';
 
@@ -22,6 +24,16 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const checks: { name: string; ok: boolean; detail: string }[] = [];
   const push = (name: string, ok: boolean, detail: string) => checks.push({ name, ok, detail });
+
+  // Included on every response, success or failure: enough to tell whether a
+  // redeploy actually picked up new environment variables.
+  const context = {
+    environment: SQUARE_ENV,
+    locationId: LOCATION_ID,
+    applicationId: process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID ?? null,
+    token: tokenFingerprint(),
+    deployment: deploymentInfo(),
+  };
 
   // 1. Environment variables present and internally consistent.
   const problems = configProblems();
@@ -34,7 +46,7 @@ export async function GET() {
   );
 
   if (problems.length) {
-    return NextResponse.json({ ok: false, environment: SQUARE_ENV, checks }, { status: 500 });
+    return NextResponse.json({ ok: false, ...context, checks }, { status: 500 });
   }
 
   // 2. The access token is accepted, and the configured location exists.
@@ -60,7 +72,7 @@ export async function GET() {
     );
   } catch (error: any) {
     push('Access token', false, explainSquareError(error));
-    return NextResponse.json({ ok: false, environment: SQUARE_ENV, checks }, { status: 500 });
+    return NextResponse.json({ ok: false, ...context, checks }, { status: 500 });
   }
 
   // 3. The catalog actually maps to storefront products.
@@ -106,8 +118,7 @@ export async function GET() {
 
     return NextResponse.json({
       ok: checks.every((c) => c.ok),
-      environment: SQUARE_ENV,
-      locationId: LOCATION_ID,
+      ...context,
       locationName,
       productCount: products.length,
       checks,
@@ -115,6 +126,6 @@ export async function GET() {
     });
   } catch (error: any) {
     push('Catalog read', false, explainSquareError(error));
-    return NextResponse.json({ ok: false, environment: SQUARE_ENV, checks }, { status: 500 });
+    return NextResponse.json({ ok: false, ...context, checks }, { status: 500 });
   }
 }
