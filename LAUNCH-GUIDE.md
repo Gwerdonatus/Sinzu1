@@ -194,6 +194,21 @@ Discounts appear as line items on Square orders → trackable in Square reports.
 
 You can integrate **Shippo** or **ShipStation** with Square later for cheaper postage — they pull Square orders in automatically, no code changes.
 
+### ⚠️ Marking orders Completed is what decrements your stock
+
+A website order arrives in Square as **OPEN**. Square only subtracts the items
+from inventory when the order reaches **COMPLETED** — so until you complete it in
+the Dashboard, the site still shows the old stock count.
+
+Practical effect: if you have 1 of something left and two people buy it an hour
+apart, both orders will go through. On a low-volume day this is unlikely, but
+**work your orders down promptly** and the window stays small.
+
+The site deliberately does *not* adjust inventory itself. If it did, you'd get a
+double subtraction — once from the site and again when you complete the order in
+Square. Square staying the single source of truth is what keeps the shop floor
+and the website in agreement.
+
 ---
 
 ## If something breaks after launch

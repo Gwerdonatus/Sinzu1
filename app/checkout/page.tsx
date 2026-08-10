@@ -44,6 +44,7 @@ type ShippingMethod = {
 type SuccessData = {
   receiptUrl?: string;
   orderId?: string;
+  emailed?: boolean;
   charged?: number;
   subtotal?: number;
   shipping?: number;
@@ -248,6 +249,7 @@ export default function CheckoutPage() {
       setSuccess({
         receiptUrl: data.receiptUrl,
         orderId: data.orderId,
+        emailed: data.emailed,
         charged: data.charged,
         subtotal: data.subtotal,
         shipping: data.shipping,
@@ -311,10 +313,24 @@ export default function CheckoutPage() {
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-black mb-0.5">Check your email</p>
-              <p className="text-xs text-black/60 leading-relaxed">
-                We&apos;ve sent a full confirmation to <strong className="text-black">{success.address?.email}</strong>. If you don&apos;t see it in a few minutes, check your spam folder.
-              </p>
+              {success.emailed === false ? (
+                <>
+                  <p className="text-sm font-semibold text-black mb-0.5">Your order is confirmed</p>
+                  <p className="text-xs text-black/60 leading-relaxed">
+                    We had trouble sending the confirmation email, but your payment went
+                    through and your order is safe. Save order <strong className="text-black">#{orderShort}</strong>, and
+                    email <a href="mailto:hello@sinzu.shop" className="underline text-black">hello@sinzu.shop</a> if
+                    you&apos;d like a copy of the receipt.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-semibold text-black mb-0.5">Check your email</p>
+                  <p className="text-xs text-black/60 leading-relaxed">
+                    We&apos;ve sent a full confirmation to <strong className="text-black">{success.address?.email}</strong>. If you don&apos;t see it in a few minutes, check your spam folder.
+                  </p>
+                </>
+              )}
             </div>
           </div>
 

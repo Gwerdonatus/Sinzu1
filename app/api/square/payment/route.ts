@@ -164,6 +164,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
     }
 
+    // Square recomputes the total from the catalog, and that recomputation is
+    // what gets charged. If it comes back higher than the figure on the Pay
+    // button — the usual cause is a tax configured on the item or location in
+    // Square, which this checkout does not display — charging it would bill
+    // the customer more than they agreed to. Refuse instead of overcharging.
+    const squareTotal = Number(order.totalMoney?.amount ?? BigInt(total));
+    if (squareTotal > total) {
+      console.error(
+        `[checkout] Square total ${squareTotal} exceeds quoted total ${total}. ` +
+          `Order ${order.id} left unpaid. Likely a tax applied in Square that the ` +
+          `site does not show at checkout.`
+      );
+      return NextResponse.json(
+        {
+          error:
+            'We could not complete this order because the total did not match what was quoted. ' +
+            'You have not been charged. Please contact hello@sinzu.shop and we will take care of it.',
+        },
+        { status: 409 }
+      );
+    }
     const chargeAmount = order.totalMoney?.amount ?? BigInt(total);
 
     const { result: paymentResult } = await paymentsApi.createPayment({
@@ -189,6 +210,7 @@ export async function POST(request: NextRequest) {
     });
 
     const payment = paymentResult.payment;
+    let emailed = false;
 
     if (payment?.status === 'COMPLETED' || payment?.status === 'APPROVED') {
       const emailItems: OrderLineItem[] = items.map((i) => {
@@ -224,10 +246,26 @@ export async function POST(request: NextRequest) {
         customerName: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
       });
 
-      Promise.all([
-        sendEmail({ to: shippingAddress.email, ...custEmail, replyTo: OWNER_EMAIL }),
-        sendEmail({ to: OWNER_EMAIL, ...ownerEmail, replyTo: shippingAddress.email }),
-      ]).catch((e) => console.error('[order-emails] failed:', e));
+      // These must be awaited. On serverless the instance can be frozen the
+      // moment the response is returned, which would abandon in-flight sends
+      // and silently drop confirmation emails — while the success page tells
+      // the customer one was sent. Payment has already succeeded here, so a
+      // failed send is logged and reported, never fatal.
+      try {
+        const [toCustomer, toOwner] = await Promise.all([
+          sendEmail({ to: shippingAddress.email, ...custEmail, replyTo: OWNER_EMAIL }),
+          sendEmail({ to: OWNER_EMAIL, ...ownerEmail, replyTo: shippingAddress.email }),
+        ]);
+        emailed = toCustomer.ok && toOwner.ok;
+        if (!emailed) {
+          console.error('[order-emails] order', order.id, {
+            customer: toCustomer.error ?? 'ok',
+            owner: toOwner.error ?? 'ok',
+          });
+        }
+      } catch (e) {
+        console.error('[order-emails] threw for order', order.id, e);
+      }
     }
 
     return NextResponse.json({
@@ -235,6 +273,7 @@ export async function POST(request: NextRequest) {
       paymentId: payment?.id,
       orderId: order.id,
       status: payment?.status,
+      emailed,
       receiptUrl: payment?.receiptUrl,
       charged: Number(chargeAmount),
       subtotal,
