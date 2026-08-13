@@ -347,7 +347,7 @@ export default function AboutPage() {
               Five years ago, we opened our first kiosk at Northtown Mall in Blaine, Minnesota. What started as a single storefront has grown into a community of everyday people who trust us with their self-care rituals.
             </p>
             <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32]">
-              This August, we&apos;re expanding to Mall of America — a milestone that felt impossible when we started, and one we&apos;re proud to share with the community that made it possible.
+              This September, we&apos;re expanding to Mall of America — a milestone that felt impossible when we started, and one we&apos;re proud to share with the community that made it possible.
             </p>
           </div>
         </div>

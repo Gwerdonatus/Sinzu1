@@ -7,6 +7,7 @@ import HeroSection from '@/components/sections/HeroSection';
 import FeaturedProducts from '@/components/sections/FeaturedProducts';
 import CategoryBanners from '@/components/sections/CategoryBanners';
 import TrustBar from '@/components/sections/TrustBar';
+import Testimonials from '@/components/sections/Testimonials';
 import MOASection from '@/components/sections/MOASection';
 import EmailSignup from '@/components/sections/EmailSignup';
 import SinzuBodyBanner from '@/components/sections/SinzuBodyBanner';
@@ -33,6 +34,9 @@ export default function Home() {
 
       <TrustBar />
 
+      {/* Customer voice — sits between the factual trust strip and the
+          MOA announcement so credibility builds before the big reveal */}
+      <Testimonials />
 
       {/* Elevated MOA milestone announcement */}
       <MOASection />

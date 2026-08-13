@@ -10,7 +10,7 @@ import { MapPin, Calendar } from 'lucide-react';
    minimal countdown, icon-circle pill buttons.
    ========================================================= */
 
-const OPEN_DATE = new Date('2026-08-10T10:00:00-05:00');
+const OPEN_DATE = new Date('2026-09-30T10:00:00-05:00');
 
 function useCountdown(target: Date) {
   const [now, setNow] = useState<number>(Date.now());
@@ -433,7 +433,7 @@ export default function MOASection() {
           </h2>
 
           <p className="moa-lede anim-fade-up anim-d3">
-            After five years at Northtown Mall, SINZU expands to America&apos;s most iconic retail destination. Opening August 10, 2026, with statement jewelry, premium haircare, and culturally rooted skincare.
+            After five years at Northtown Mall, SINZU expands to America&apos;s most iconic retail destination. Opening September 30, 2026, with statement jewelry, premium haircare, and culturally rooted skincare.
           </p>
 
           {!isOpen && (
@@ -524,7 +524,7 @@ function MOAPlaceholder() {
         </svg>
       </div>
       <div className="moa-placeholder-title">Mall of America</div>
-      <div className="moa-placeholder-sub">Opening August 10, 2026</div>
+      <div className="moa-placeholder-sub">Opening September 30, 2026</div>
     </div>
   );
 }

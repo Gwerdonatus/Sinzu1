@@ -17,7 +17,7 @@ const ITEMS = [
   {
     icon: Store,
     title: 'Shop In Person',
-    body: 'Northtown Mall today · Mall of America Aug 2026',
+    body: 'Northtown Mall today · Mall of America Sept 2026',
   },
   {
     icon: Truck,

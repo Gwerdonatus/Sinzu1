@@ -11,7 +11,7 @@ export default function TermsPage() {
 
       <h2>1. About Us</h2>
       <p>
-        $INZU is a Minnesota-based retail brand offering jewelry, haircare, and skincare products. Our current storefront is at Northtown Mall in Blaine, MN, with a new location opening at Mall of America in August 2026.
+        $INZU is a Minnesota-based retail brand offering jewelry, haircare, and skincare products. Our current storefront is at Northtown Mall in Blaine, MN, with a new location opening at Mall of America in September 2026.
       </p>
 
       <h2>2. Products & Availability</h2>

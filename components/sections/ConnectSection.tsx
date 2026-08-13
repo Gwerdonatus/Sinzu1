@@ -1,26 +1,10 @@
 import Link from 'next/link';
-import { Marcellus, Italianno, Jost } from 'next/font/google';
 
-const marcellus = Marcellus({
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-  variable: '--sz-display',
-});
+const marcellus = { className: '', variable: '' };
 
-const italianno = Italianno({
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-  variable: '--sz-script',
-});
+const italianno = { className: '', variable: '' };
 
-const jost = Jost({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  display: 'swap',
-  variable: '--sz-sans',
-});
+const jost = { className: '', variable: '' };
 
 /* =========================================================
    SINZU — Connect section
@@ -139,13 +123,13 @@ export default function ConnectSection() {
         </Link>
 
         <Link
-          href="https://instagram.com/sinzu.llc"
+          href="https://www.instagram.com/sinzu.world"
           target="_blank"
           rel="noopener noreferrer"
           className="szn-item"
         >
           <span className="szn-label">Instagram</span>
-          <span className="szn-value">@sinzu.llc</span>
+          <span className="szn-value">@sinzu.world</span>
         </Link>
       </div>
     </section>

@@ -19,7 +19,7 @@ const STORE_LOCATIONS = [
     address: 'Mall of America, Bloomington, MN 55425',
     mapQuery: 'Mall of America, Bloomington, MN',
     appleMapsUrl: 'https://maps.apple/p/w6QdLfcnvbkArR',
-    note: 'Opens Aug 10, 2026',
+    note: 'Opens Sept 30, 2026',
   },
 ];
 

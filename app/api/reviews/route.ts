@@ -30,6 +30,7 @@ export const dynamic = 'force-dynamic';
 interface Review {
   productId: string;
   reviewerName: string;
+  location?: string;
   rating: number;
   title?: string;
   content: string;

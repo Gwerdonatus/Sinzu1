@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     template: '%s · SINZU LLC',
   },
   description:
-    'Culturally-rooted jewelry, premium haircare, and skincare essentials from SINZU. Shop online, visit Northtown Mall, and stop by our new Mall of America location opening August 10, 2026.',
+    'Culturally-rooted jewelry, premium haircare, and skincare essentials from SINZU. Shop online, visit Northtown Mall, and stop by our new Mall of America location opening September 30, 2026.',
   applicationName: 'SINZU',
   authors: [{ name: 'SINZU LLC' }],
   keywords: [
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     siteName: 'SINZU LLC',
     title: 'SINZU LLC — Everyday Luxury. Made to Stand Out.',
     description:
-      'Culturally-rooted jewelry, premium haircare, and skincare essentials. Shop online or visit us at Northtown Mall + Mall of America (Aug 10, 2026).',
+      'Culturally-rooted jewelry, premium haircare, and skincare essentials. Shop online or visit us at Northtown Mall + Mall of America (Sept 30, 2026).',
     images: [
       {
         url: '/og-image.png',
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     description:
       'Culturally-rooted jewelry, premium haircare, and skincare essentials. Now expanding to Mall of America.',
     images: ['/og-image.png'],
-    creator: '@sinzu.llc',
+    creator: '@sinzu.world',
   },
   robots: {
     index: true,
@@ -105,7 +105,7 @@ const organizationJsonLd = {
   logo: `${SITE}/sinzu-logo.png`,
   image: `${SITE}/og-image.png`,
   description:
-    'Luxury jewelry, haircare, and skincare. Retail stores at Northtown Mall and Mall of America (opening Aug 10, 2026).',
+    'Luxury jewelry, haircare, and skincare. Retail stores at Northtown Mall and Mall of America (opening Sept 30, 2026).',
   telephone: '+1-612-487-8228',
   email: 'hello@sinzu.shop',
   address: [
@@ -127,7 +127,7 @@ const organizationJsonLd = {
     },
   ],
   sameAs: [
-    'https://instagram.com/sinzu.llc',
+    'https://www.instagram.com/sinzu.world',
     'https://facebook.com',
   ],
   potentialAction: {

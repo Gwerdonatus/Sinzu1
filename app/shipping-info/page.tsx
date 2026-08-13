@@ -30,7 +30,7 @@ export default function ShippingInfoPage() {
 
       <h2>Local Pickup</h2>
       <p>
-        Free local pickup is available at our Northtown Mall location. Choose &quot;Local Pickup&quot; at checkout, and you&apos;ll receive an email when your order is ready — usually the same day. Starting August 10, 2026, pickup will also be available at Mall of America.
+        Free local pickup is available at our Northtown Mall location. Choose &quot;Local Pickup&quot; at checkout, and you&apos;ll receive an email when your order is ready — usually the same day. Starting September 30, 2026, pickup will also be available at Mall of America.
       </p>
 
       <h2>Order Tracking</h2>

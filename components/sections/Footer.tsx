@@ -145,7 +145,7 @@ export default function Footer() {
                 <MapPin size={14} className="shrink-0 mt-0.5" />
                 <div>
                   <div className="font-medium text-[#1a1200]/85">Mall of America</div>
-                  <div>Opens Aug 10, 2026</div>
+                  <div>Opens Sept 30, 2026</div>
                 </div>
               </div>
               <a href="tel:+16124878228" className="flex items-center gap-2 text-[13px] text-[#1a1200]/80 hover:text-[#1a1200] transition-colors">

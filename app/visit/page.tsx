@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { MapPin, Clock, Phone, Sparkles, Store, Calendar } from 'lucide-react';
 
 /* =========================================================
-   Visit Us — Northtown Mall (open) + Mall of America (Aug 10).
+   Visit Us — Northtown Mall (open) + Mall of America (Sept 30).
    Uses Google Maps embedded via query URL, no API key needed.
    ========================================================= */
 
@@ -122,13 +122,13 @@ export default function VisitPage() {
             </div>
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#faf3de] border border-[#e2c471] text-[10px] tracking-[0.24em] uppercase text-[#5c4210] font-medium mb-5">
-                <Calendar size={11} /> Opening August 10, 2026
+                <Calendar size={11} /> Opening September 30, 2026
               </div>
               <h2 className="font-playfair text-3xl md:text-4xl font-semibold text-[#1a1200] italic mb-5">
                 Mall of America
               </h2>
               <p className="text-[14px] text-[#5b5348] leading-relaxed mb-6">
-                We&apos;re expanding to one of America&apos;s most iconic retail destinations. Our new kiosk at Mall of America opens August 10, 2026 — join our list to be the first to know exact location details, opening events, and grand-opening offers.
+                We&apos;re expanding to one of America&apos;s most iconic retail destinations. Our new kiosk at Mall of America opens September 30, 2026 — join our list to be the first to know exact location details, opening events, and grand-opening offers.
               </p>
               <div className="space-y-4 mb-8">
                 <div className="flex gap-3 text-[14px] text-[#5b5348]">
@@ -144,7 +144,7 @@ export default function VisitPage() {
                   <Store size={18} className="shrink-0 text-[#8b6914] mt-0.5" />
                   <div>
                     <div className="text-[#1a1200] font-medium">Grand Opening</div>
-                    <div>Monday, August 10, 2026</div>
+                    <div>Wednesday, September 30, 2026</div>
                     <div className="text-xs mt-1 text-[#8b6914]">
                       Show a MOA business card for 15% off — code MOA15
                     </div>

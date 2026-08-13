@@ -16,7 +16,7 @@ const MESSAGES: { text: React.ReactNode; href?: string }[] = [
         <span className="ab-sep">/</span>
         SINZU at Mall of America
         <span className="ab-sep">/</span>
-        August 10
+        September 30
       </>
     ),
     href: '/visit',

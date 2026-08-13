@@ -145,7 +145,7 @@ export function orderConfirmationEmail(args: OrderConfirmationArgs): { subject: 
     <div style="margin-top:32px;padding:20px;background:linear-gradient(135deg,#faf3de,#f5e7a3);border-radius:6px;text-align:center;">
       <div style="font-family:Georgia,serif;font-style:italic;font-size:15px;color:#5c4210;line-height:1.5;">
         Visit us in person at Northtown Mall,<br>
-        or Mall of America starting August 10, 2026.
+        or Mall of America starting September 30, 2026.
       </div>
       <div style="margin-top:12px;">
         <a href="${SITE}/visit" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#8b6914;font-weight:600;text-decoration:none;">Visit Our Stores &rarr;</a>
@@ -217,14 +217,14 @@ export function welcomeEmail(): { subject: string; html: string; text: string } 
       What we&rsquo;re about
     </h2>
     <p style="margin:0 0 12px 0;font-size:14px;line-height:1.7;color:#5b5348;">
-      SINZU is a Minnesota retail brand celebrating five years at Northtown Mall — and this August, we&rsquo;re expanding to Mall of America. We handpick every piece of jewelry, every satin bonnet, every ounce of shea butter, so you don&rsquo;t have to.
+      SINZU is a Minnesota retail brand celebrating five years at Northtown Mall — and this September, we&rsquo;re expanding to Mall of America. We handpick every piece of jewelry, every satin bonnet, every ounce of shea butter, so you don&rsquo;t have to.
     </p>
     <p style="margin:0 0 24px 0;font-size:14px;line-height:1.7;color:#5b5348;">
       Watch your inbox for new drops, restocks, and (only occasionally) exclusive offers. No spam — we promise.
     </p>
 
     <div style="margin-top:32px;padding:20px;background:#faf3de;border-radius:6px;text-align:center;">
-      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#8b6914;font-weight:600;">Coming August 10, 2026</div>
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#8b6914;font-weight:600;">Coming September 30, 2026</div>
       <div style="font-family:Georgia,serif;font-style:italic;font-size:17px;color:#5c4210;margin-top:6px;">
         SINZU at Mall of America
       </div>
@@ -242,7 +242,7 @@ export function welcomeEmail(): { subject: string; html: string; text: string } 
     `Shop the collection: ${SITE}/shop`,
     ``,
     `SINZU is a Minnesota retail brand celebrating five years at Northtown Mall`,
-    `and expanding to Mall of America on August 10, 2026.`,
+    `and expanding to Mall of America on September 30, 2026.`,
     ``,
     `Questions? Reply to this email.`,
     `— SINZU LLC`,

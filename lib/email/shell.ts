@@ -74,7 +74,7 @@ export function emailShell({ preheader = '', body }: ShellArgs): string {
             <tr><td align="center" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;color:#8b6914;line-height:1.7;">
               <strong style="color:#5c4210;">SINZU LLC</strong><br>
               Northtown Mall · Blaine, MN<br>
-              Opening Aug 10, 2026 at Mall of America<br>
+              Opening Sept 30, 2026 at Mall of America<br>
               <a href="tel:+16124878228" style="color:#8b6914;text-decoration:none;">+1 (612) 487-8228</a> &nbsp;·&nbsp;
               <a href="mailto:hello@sinzu.shop" style="color:#8b6914;text-decoration:none;">hello@sinzu.shop</a><br><br>
               <a href="${SITE}" style="color:#8b6914;">${SITE.replace(/^https?:\/\//, '')}</a>

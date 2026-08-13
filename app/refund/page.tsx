@@ -41,7 +41,7 @@ export default function RefundPage() {
 
       <h2>In-Store Returns</h2>
       <p>
-        You may return eligible items at our Northtown Mall location during regular mall hours. Please bring your order confirmation or receipt. From August 10, 2026 onward, returns will also be accepted at our Mall of America kiosk.
+        You may return eligible items at our Northtown Mall location during regular mall hours. Please bring your order confirmation or receipt. From September 30, 2026 onward, returns will also be accepted at our Mall of America kiosk.
       </p>
     </PolicyLayout>
   );

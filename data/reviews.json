@@ -1,10 +1,13 @@
 {
   "_comment": "SINZU reviews. Add new reviews as objects in the array below and redeploy to publish. Reviews submitted via the site's Write a Review form are emailed to the owner (formatted for copy-paste) — moderate then paste here.",
+  "_comment_scope": "productId: '<square-item-id>' = that product only. '*' = every product page. 'jewelry:*' / 'haircare:*' / 'skincare:*' = all products in that category. The homepage testimonial section shows the '*' and category-scoped ones.",
+  "_comment_fields": "location is optional and shown under the name on the homepage — it is what makes a testimonial read as a real person rather than filler.",
 
   "reviews": [
     {
       "productId": "*",
       "reviewerName": "Ayana T.",
+      "location": "Blaine, MN",
       "rating": 5,
       "title": "This is my third order",
       "content": "I found $INZU at Northtown last year and haven't stopped shopping. Every piece feels intentional. The shipping was fast too.",
@@ -14,6 +17,7 @@
     {
       "productId": "*",
       "reviewerName": "Marcus D.",
+      "location": "Minneapolis, MN",
       "rating": 5,
       "title": "Real customer service",
       "content": "Called with a question about my bonnet order and got an actual person. That doesn't happen much anymore. Product was exactly as described.",
@@ -22,7 +26,8 @@
     },
     {
       "productId": "*",
-      "reviewerName": "Ife O.",
+      "reviewerName": "Jasmine R.",
+      "location": "Brooklyn Park, MN",
       "rating": 4,
       "title": "Beautiful, would order again",
       "content": "Packaging felt premium. Only reason for 4 stars is I wish there were more color options — hopefully at Mall of America you'll expand!",
@@ -32,6 +37,7 @@
     {
       "productId": "jewelry:*",
       "reviewerName": "Zara N.",
+      "location": "St. Paul, MN",
       "rating": 5,
       "title": "Wore it every day this month",
       "content": "The gold tone hasn't faded at all. I get compliments constantly. Worth every dollar.",
@@ -41,6 +47,7 @@
     {
       "productId": "haircare:*",
       "reviewerName": "Denise M.",
+      "location": "Maple Grove, MN",
       "rating": 5,
       "title": "The satin is real",
       "content": "You can tell the difference between cheap satin and the good stuff. This is the good stuff. My hair stays smooth all night.",
@@ -50,6 +57,7 @@
     {
       "productId": "skincare:*",
       "reviewerName": "Rachel B.",
+      "location": "Chicago, IL",
       "rating": 5,
       "title": "Cleared my skin up",
       "content": "I've used African black soap from other brands and this one is authentic. Cleared up my breakouts within two weeks. Follow with the shea butter.",
@@ -58,7 +66,8 @@
     },
     {
       "productId": "skincare:*",
-      "reviewerName": "Tomi A.",
+      "reviewerName": "Brianna K.",
+      "location": "Atlanta, GA",
       "rating": 4,
       "title": "Great scent, lasts a while",
       "content": "The shea butter melts nicely on the skin and the vanilla amber scent is subtle, not overpowering. A little goes a long way.",

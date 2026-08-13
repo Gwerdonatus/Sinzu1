@@ -6,6 +6,7 @@ import { Star, Check, AlertCircle, Loader2, ChevronDown, ChevronLeft, ChevronRig
 interface Review {
   productId: string;
   reviewerName: string;
+  location?: string;
   rating: number;
   title?: string;
   content: string;
@@ -146,7 +147,10 @@ function ReviewCard({
             </div>
             <div className="flex items-center gap-2 mt-0.5">
               <StarDisplay rating={review.rating} size={11} />
-              <span className="text-[11px] text-black/30">{formatDate(review.date)}</span>
+              <span className="text-[11px] text-black/30">
+                {review.location ? `${review.location} · ` : ''}
+                {formatDate(review.date)}
+              </span>
             </div>
           </div>
           <ChevronDown
@@ -440,12 +444,20 @@ export default function ProductReviews({ productId, productName }: Props) {
           )}
         </div>
 
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="shrink-0 inline-flex items-center gap-1.5 bg-black text-white px-4 py-2.5 text-[10px] font-medium tracking-[0.12em] uppercase rounded-full hover:bg-black/80 transition-all duration-300 hover:-translate-y-0.5"
-        >
-          {showForm ? 'Close' : (<><Plus size={12} strokeWidth={2.5} />Review</>)}
-        </button>
+        <div className="shrink-0 flex flex-col items-end gap-1.5">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="inline-flex items-center gap-1.5 bg-black text-white px-4 py-2.5 text-[10px] font-medium tracking-[0.12em] uppercase rounded-full hover:bg-black/80 transition-all duration-300 hover:-translate-y-0.5"
+          >
+            {showForm ? 'Close' : (<><Plus size={12} strokeWidth={2.5} />Review</>)}
+          </button>
+          <a
+            href={`mailto:reviews@sinzu.shop?subject=${encodeURIComponent(`Review: ${productName}`)}&body=${encodeURIComponent(`Product: ${productName}\n\nRating (1-5):\n\nYour name (as you'd like it shown):\n\nReview:\n`)}`}
+            className="text-[10px] text-black/50 hover:text-black underline underline-offset-2 transition-colors"
+          >
+            or email us instead
+          </a>
+        </div>
       </div>
 
       {/* Write a review form */}
