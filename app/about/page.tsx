@@ -27,8 +27,8 @@ import { Star, Heart, Users, Sparkles, ArrowRight, BookOpen, Camera } from 'luci
  *  why          — Ruan Richard Rodrigues (unsplash.com/@ricdeoliveira)
  */
 const IMAGE_URLS = {
-  heroBackdrop: 'https://images.unsplash.com/photo-1632765854612-9b02b6ec2b15?q=80&w=1600&auto=format&fit=crop',
-  heroInset: 'https://images.unsplash.com/photo-1539701938214-0d9736e1c16b?q=80&w=1200&auto=format&fit=crop',
+  heroBackdrop: '/about/sinzu-about.jpg',
+  heroInset: '/about/sinzu-about2.jpeg',
   story: 'https://images.unsplash.com/photo-1746723391801-1a24f7a57730?q=80&w=1600&auto=format&fit=crop',
   values: 'https://images.unsplash.com/photo-1693004927824-f2623bbedc8b?q=80&w=1600&auto=format&fit=crop',
   why: 'https://images.unsplash.com/photo-1650455221359-3aebf920bcc5?q=80&w=1600&auto=format&fit=crop',
@@ -44,12 +44,16 @@ function Sinzu({ className = '' }: { className?: string }) {
  *  exactly what to shoot/generate until then. */
 function ImageSlot({
   hint,
+  alt,
   path,
   src,
   className = '',
   kenBurns = true,
 }: {
   hint: string;
+  /** Real description of the photo, once one is in place. Falls back to
+   *  `hint`, which is a brief for the photographer, not a description. */
+  alt?: string;
   path: string;
   src?: string;
   className?: string;
@@ -61,7 +65,7 @@ function ImageSlot({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
-          alt={hint}
+          alt={alt ?? hint}
           className={`w-full h-full object-cover grayscale contrast-110 transition-transform duration-[1400ms] ease-out ${
             kenBurns ? 'scale-[1.08] group-[.visible]:scale-100' : ''
           }`}
@@ -228,6 +232,7 @@ export default function AboutPage() {
           <ImageSlot
             hint="Full-bleed portrait of the founder or a signature product — desaturated toward grayscale, softly out of focus. This is the backdrop the wordmark sits on."
             path="/about/hero-backdrop.jpg"
+            alt="SINZU founder seated beneath the illuminated $INZU sign in a leopard-print coat"
             src={IMAGE_URLS.heroBackdrop}
             className="w-full h-full"
             kenBurns={false}
@@ -243,6 +248,7 @@ export default function AboutPage() {
           <ImageSlot
             hint="Sharp, in-focus close crop — founder portrait, or a hero product macro shot."
             path="/about/hero-inset.jpg"
+            alt="Profile portrait of the SINZU founder"
             src={IMAGE_URLS.heroInset}
             className="w-full h-full shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
             kenBurns={false}
