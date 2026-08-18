@@ -25,7 +25,7 @@ import { Star, Heart, Users, Sparkles, ArrowRight, BookOpen, Camera } from 'luci
  *  why    — Ruan Richard Rodrigues (unsplash.com/@ricdeoliveira)
  */
 const IMAGE_URLS = {
-  heroBackdrop: '/about/sinzu-about.jpg',
+  heroBackdrop: '/about/sinzu-hero-1122.jpg',
   story: 'https://images.unsplash.com/photo-1746723391801-1a24f7a57730?q=80&w=1600&auto=format&fit=crop',
   values: 'https://images.unsplash.com/photo-1693004927824-f2623bbedc8b?q=80&w=1600&auto=format&fit=crop',
   why: 'https://images.unsplash.com/photo-1650455221359-3aebf920bcc5?q=80&w=1600&auto=format&fit=crop',
@@ -44,6 +44,10 @@ function ImageSlot({
   alt,
   path,
   src,
+  srcSet,
+  sizes,
+  webpSrcSet,
+  eager = false,
   className = '',
   kenBurns = true,
 }: {
@@ -53,20 +57,41 @@ function ImageSlot({
   alt?: string;
   path: string;
   src?: string;
+  /** Widths of the fallback JPEG, e.g. "…-768.jpg 768w, …-1122.jpg 1122w". */
+  srcSet?: string;
+  sizes?: string;
+  /** Same widths as WebP. Browsers that understand it take it; the rest fall back. */
+  webpSrcSet?: string;
+  /** True for the hero: it is the largest thing on screen, so it must not lazy-load. */
+  eager?: boolean;
   className?: string;
   kenBurns?: boolean;
 }) {
   if (src) {
+    const img = (
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
+        alt={alt ?? hint}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding={eager ? 'sync' : 'async'}
+        className={`w-full h-full object-cover contrast-110 transition-transform duration-[1400ms] ease-out ${
+          kenBurns ? 'scale-[1.08] group-[.visible]:scale-100' : ''
+        }`}
+      />
+    );
     return (
       <div className={`dark-panel relative overflow-hidden ${className}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={alt ?? hint}
-          className={`w-full h-full object-cover contrast-110 transition-transform duration-[1400ms] ease-out ${
-            kenBurns ? 'scale-[1.08] group-[.visible]:scale-100' : ''
-          }`}
-        />
+        {webpSrcSet ? (
+          <picture>
+            <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
+            {img}
+          </picture>
+        ) : (
+          img
+        )}
       </div>
     );
   }
@@ -226,10 +251,14 @@ export default function AboutPage() {
         {/* Full-bleed backdrop photo */}
         <div className="absolute inset-0">
           <ImageSlot
-            hint="Full-bleed portrait of the founder or a signature product — desaturated toward grayscale, softly out of focus. This is the backdrop the wordmark sits on."
+            hint="Full-bleed portrait of the founder or a signature product. This is the backdrop the wordmark sits on."
             path="/about/hero-backdrop.jpg"
             alt="SINZU founder seated beneath the illuminated $INZU sign in a leopard-print coat"
             src={IMAGE_URLS.heroBackdrop}
+            srcSet="/about/sinzu-hero-768.jpg 768w, /about/sinzu-hero-1122.jpg 1122w"
+            webpSrcSet="/about/sinzu-hero-768.webp 768w, /about/sinzu-hero-1122.webp 1122w"
+            sizes="100vw"
+            eager
             className="w-full h-full"
             kenBurns={false}
           />
