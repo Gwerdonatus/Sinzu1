@@ -16,19 +16,16 @@ import { Star, Heart, Users, Sparkles, ArrowRight, BookOpen, Camera } from 'luci
  *  automatically everywhere it's used below. Leave blank to keep
  *  showing the placeholder caption for that spot.
  *
- *  These five are real, free (non-Unsplash+) stock photos, filled in
- *  as working placeholders so you can see the page with images in it.
- *  Swap any of them for your own photography whenever you're ready —
- *  same process, just replace the URL. Credit while these stay live:
- *  heroBackdrop — Good Faces (unsplash.com/@goodfacesagency)
- *  heroInset    — Jessica Felicio (unsplash.com/@jekafe)
- *  story        — SumUp (unsplash.com/@sumup)
- *  values       — Leighann Blackwood (unsplash.com/@ohleighann)
- *  why          — Ruan Richard Rodrigues (unsplash.com/@ricdeoliveira)
+ *  heroBackdrop is the brand's own photograph. The remaining three are
+ *  free (non-Unsplash+) stock standing in until real photography exists;
+ *  swap any of them for a file in /public/about the same way. Credit
+ *  while the stock ones stay live:
+ *  story  — SumUp (unsplash.com/@sumup)
+ *  values — Leighann Blackwood (unsplash.com/@ohleighann)
+ *  why    — Ruan Richard Rodrigues (unsplash.com/@ricdeoliveira)
  */
 const IMAGE_URLS = {
   heroBackdrop: '/about/sinzu-about.jpg',
-  heroInset: '/about/sinzu-about2.jpeg',
   story: 'https://images.unsplash.com/photo-1746723391801-1a24f7a57730?q=80&w=1600&auto=format&fit=crop',
   values: 'https://images.unsplash.com/photo-1693004927824-f2623bbedc8b?q=80&w=1600&auto=format&fit=crop',
   why: 'https://images.unsplash.com/photo-1650455221359-3aebf920bcc5?q=80&w=1600&auto=format&fit=crop',
@@ -66,7 +63,7 @@ function ImageSlot({
         <img
           src={src}
           alt={alt ?? hint}
-          className={`w-full h-full object-cover grayscale contrast-110 transition-transform duration-[1400ms] ease-out ${
+          className={`w-full h-full object-cover contrast-110 transition-transform duration-[1400ms] ease-out ${
             kenBurns ? 'scale-[1.08] group-[.visible]:scale-100' : ''
           }`}
         />
@@ -221,8 +218,7 @@ export default function AboutPage() {
 
       {/* =========================================================
           SECTION 1 — HERO
-          Exvia-style: full-bleed backdrop photo, a sharper inset
-          portrait layered on top, floating corner tags, and the
+          Exvia-style: full-bleed backdrop photo, floating corner tags, and the
           brand's own name as the giant nameplate — since we're a
           brand, $INZU stands where a person's name would.
           ========================================================= */}
@@ -238,21 +234,6 @@ export default function AboutPage() {
             kenBurns={false}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#14110C] via-[#14110C]/35 to-[#14110C]/70" />
-        </div>
-
-        {/* Inset sharp portrait — the layered "photo within a photo" moment */}
-        <div
-          className="absolute left-1/2 top-[12%] -translate-x-1/2 w-[200px] h-[270px] sm:w-[260px] sm:h-[350px] md:w-[300px] md:h-[400px] z-[5] fade-up"
-          style={{ transitionDelay: '0.15s' }}
-        >
-          <ImageSlot
-            hint="Sharp, in-focus close crop — founder portrait, or a hero product macro shot."
-            path="/about/hero-inset.jpg"
-            alt="Profile portrait of the SINZU founder"
-            src={IMAGE_URLS.heroInset}
-            className="w-full h-full shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
-            kenBurns={false}
-          />
         </div>
 
         {/* Floating corner labels — Exvia style, recolored to our gold */}
