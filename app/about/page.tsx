@@ -48,6 +48,7 @@ function ImageSlot({
   sizes,
   webpSrcSet,
   eager = false,
+  imgClass = '',
   className = '',
   kenBurns = true,
 }: {
@@ -64,6 +65,9 @@ function ImageSlot({
   webpSrcSet?: string;
   /** True for the hero: it is the largest thing on screen, so it must not lazy-load. */
   eager?: boolean;
+  /** Extra classes on the <img> itself — object-position, mainly, since a
+   *  portrait photo in a landscape frame has to be told what to keep. */
+  imgClass?: string;
   className?: string;
   kenBurns?: boolean;
 }) {
@@ -77,7 +81,7 @@ function ImageSlot({
         alt={alt ?? hint}
         loading={eager ? 'eager' : 'lazy'}
         decoding={eager ? 'sync' : 'async'}
-        className={`w-full h-full object-cover contrast-110 transition-transform duration-[1400ms] ease-out ${
+        className={`w-full h-full object-cover contrast-110 transition-transform duration-[1400ms] ease-out ${imgClass} ${
           kenBurns ? 'scale-[1.08] group-[.visible]:scale-100' : ''
         }`}
       />
@@ -247,7 +251,9 @@ export default function AboutPage() {
           brand's own name as the giant nameplate — since we're a
           brand, $INZU stands where a person's name would.
           ========================================================= */}
-      <section className="hero relative min-h-screen bg-[#14110C] flex items-end overflow-hidden">
+      {/* -mt-4 cancels the shared Header's mb-4, so the photograph meets the
+          header edge to edge instead of floating below a strip of white. */}
+      <section className="hero relative -mt-4 min-h-screen bg-[#14110C] flex items-end overflow-hidden">
         {/* Full-bleed backdrop photo */}
         <div className="absolute inset-0">
           <ImageSlot
@@ -259,10 +265,19 @@ export default function AboutPage() {
             webpSrcSet="/about/sinzu-hero-768.webp 768w, /about/sinzu-hero-1122.webp 1122w"
             sizes="100vw"
             eager
+            /* A 0.80 portrait in a phone frame (0.46) crops sideways; in a
+               desktop frame (~1.8) it crops top and bottom. Centring loses the
+               neon sign on mobile and her head on desktop, so each axis is
+               aimed deliberately: hold the left edge on narrow screens to keep
+               the sign whole, sit high on wide ones to keep the sign and her
+               head in frame. */
+            imgClass="object-[10%_50%] md:object-[50%_12%]"
             className="w-full h-full"
             kenBurns={false}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#14110C] via-[#14110C]/35 to-[#14110C]/70" />
+          {/* Was 70% black at the top, which buried the neon sign and her face.
+              The bottom stays solid so the wordmark keeps its contrast. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#14110C] via-[#14110C]/25 to-[#14110C]/45" />
         </div>
 
         {/* Floating corner labels — Exvia style, recolored to our gold */}
