@@ -46,7 +46,7 @@ const CSS = `
   /* The band is roughly 2.7:1 and the photograph is a 0.8 portrait, so only
      about a third of its height survives. Centred, that third lands on the
      coat. Sitting high keeps the lit sign and her face in the strip. */
-  object-position:50% 12%;
+  object-position:50% 11%;
 }
 .szv-scrim{
   position:absolute; inset:0;
