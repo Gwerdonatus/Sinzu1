@@ -43,6 +43,10 @@ const CSS = `
 .szv-media{
   position:absolute; inset:0;
   width:100%; height:100%; object-fit:cover;
+  /* The band is roughly 2.7:1 and the photograph is a 0.8 portrait, so only
+     about a third of its height survives. Centred, that third lands on the
+     coat. Sitting high keeps the lit sign and her face in the strip. */
+  object-position:50% 12%;
 }
 .szv-scrim{
   position:absolute; inset:0;
@@ -88,7 +92,9 @@ const CSS = `
 
 export default function VideoSection({
   videoSrc,
-  imageSrc = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1800&h=1000&fit=crop',
+  /* The brand's own photograph rather than stock. It is a portrait being
+     shown in a wide band, which the object-position in the CSS accounts for. */
+  imageSrc = '/about/sinzu-hero-1122.jpg',
   alt = 'SINZU',
   display = 'The SINZU',
   script = 'experience',
