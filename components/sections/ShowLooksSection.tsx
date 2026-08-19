@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { Product } from '@/types';
 import { Marcellus, Italianno, Jost } from 'next/font/google';
 
 const marcellus = Marcellus({
@@ -44,32 +45,52 @@ const jost = Jost({
 
 type Photo = { src: string; alt: string; tilt: string; delay: number };
 
-const PHOTOS: Photo[] = [
-  {
-    src: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=360&h=440&fit=crop',
-    alt: 'Glowing skin',
-    tilt: '-3deg',
-    delay: 0,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=360&h=440&fit=crop',
-    alt: 'Styled jewelry',
-    tilt: '2.5deg',
-    delay: 0.12,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=360&h=440&fit=crop',
-    alt: 'Hair care routine',
-    tilt: '-2.5deg',
-    delay: 0.24,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=360&h=440&fit=crop',
-    alt: 'Beauty essentials',
-    tilt: '3deg',
-    delay: 0.36,
-  },
+/* The four polaroids used to be Unsplash stock. They now come from the
+   Square catalog, so whatever photograph the shop uploads for a product
+   is the photograph that shows here.
+
+   Each slot names the product it wants and the category to fall back on
+   if that product is ever renamed or removed, so a slot degrades to a
+   sibling product rather than going blank. */
+type Slot = {
+  prefer: RegExp;
+  category: string;
+  /** Kept out of the fallback: these photographs have the colour name
+   *  ("PURPLE") burned into them as a swatch label, which reads as a
+   *  catalogue page rather than someone's shelf. */
+  avoid?: RegExp;
+  tilt: string;
+  delay: number;
+};
+
+const SLOTS: Slot[] = [
+  { prefer: /black soap/i,     category: 'Skincare',  avoid: /net sponge/i, tilt: '-3deg',   delay: 0 },
+  { prefer: /africa earring/i, category: 'Jewelry',                          tilt: '2.5deg',  delay: 0.12 },
+  { prefer: /satin durag/i,    category: 'Hair Care',                        tilt: '-2.5deg', delay: 0.24 },
+  { prefer: /butter bar/i,     category: 'Skincare',  avoid: /net sponge/i, tilt: '3deg',    delay: 0.36 },
 ];
+
+function buildPhotos(products: Product[]): Photo[] {
+  const used = new Set<string>();
+  const photos: Photo[] = [];
+
+  const usable = (p: Product) => !used.has(p.id) && !p.image.includes('placeholder');
+
+  for (const slot of SLOTS) {
+    const match =
+      products.find((p) => slot.prefer.test(p.name) && usable(p)) ??
+      products.find(
+        (p) =>
+          p.category === slot.category &&
+          usable(p) &&
+          !(slot.avoid && slot.avoid.test(p.name))
+      );
+    if (!match) continue;
+    used.add(match.id);
+    photos.push({ src: match.image, alt: match.name, tilt: slot.tilt, delay: slot.delay });
+  }
+  return photos;
+}
 
 const CSS = `
 .szg{
@@ -181,7 +202,8 @@ const CSS = `
 }
 `;
 
-export default function ShowLooksSection() {
+export default function ShowLooksSection({ products }: { products: Product[] }) {
+  const PHOTOS = buildPhotos(products);
   const root = useRef<HTMLElement>(null);
 
   useEffect(() => {

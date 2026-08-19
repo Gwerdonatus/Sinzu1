@@ -9,13 +9,13 @@ import { Clock, Mail, Instagram, ArrowRight, Plus, MapPin, Navigation } from 'lu
 
 const STORE_LOCATIONS = [
   {
-    name: 'SINZU — Northtown Mall',
+    name: 'SINZU at Northtown Mall',
     address: 'Northtown Mall, Blaine, MN 55434',
     mapQuery: 'Northtown Mall, Blaine, MN 55434',
     appleMapsUrl: 'https://maps.apple/p/eY9vZhDy0HVa_T',
   },
   {
-    name: 'SINZU — Mall of America',
+    name: 'SINZU at Mall of America',
     address: 'Mall of America, Bloomington, MN 55425',
     mapQuery: 'Mall of America, Bloomington, MN',
     appleMapsUrl: 'https://maps.apple/p/w6QdLfcnvbkArR',
@@ -38,11 +38,11 @@ const FAQS = [
   },
   {
     q: 'Do you restock sold-out items?',
-    a: 'Popular pieces are restocked regularly. Follow @sinzu.llc on Instagram or join our email list — restocks are announced there first.',
+    a: 'Popular pieces are restocked regularly. Follow @sinzu.llc on Instagram or join our email list. Restocks are announced there first.',
   },
   {
     q: 'Can I change or cancel my order?',
-    a: 'If your order has not shipped yet, yes — email us as soon as possible with your order number and we will take care of it.',
+    a: 'If your order has not shipped yet, yes, email us as soon as possible with your order number and we will take care of it.',
   },
 ];
 
@@ -67,7 +67,7 @@ export default function ContactPage() {
 
   const handleSubmit = () => {
     const subject = encodeURIComponent(`[${form.topic}] Message from ${form.name || 'the website'}`);
-    const body = encodeURIComponent(`${form.message}\n\n— ${form.name}\n${form.email}`);
+    const body = encodeURIComponent(`${form.message}\n\n${form.name}\n${form.email}`);
     window.location.href = `mailto:info@sinzullc.com?subject=${subject}&body=${body}`;
   };
 
@@ -198,7 +198,7 @@ export default function ContactPage() {
               Talk to <Sinzu />.
             </h1>
             <p className="text-[#6B6B6B] text-base md:text-[1.05rem] leading-[1.9] max-w-md font-light">
-              Questions about an order, a product, or a piece you have your eye on — we read everything, and we reply fast.
+              Questions about an order, a product, or a piece you have your eye on. We read everything, and we reply fast.
             </p>
           </div>
           <div className="h-[38vh] lg:h-[55vh] min-h-[300px] rounded-sm dark-panel dark-weave fade-up relative overflow-hidden" style={{ transitionDelay: '0.1s' }}>
@@ -304,7 +304,7 @@ export default function ContactPage() {
                     activeLocation === i ? 'text-[#D9B54E] border-[#D9B54E]' : 'text-white/40 border-transparent hover:text-white/70'
                   }`}
                 >
-                  {loc.name.replace('SINZU — ', '')}
+                  {loc.name.replace('SINZU at ', '')}
                 </button>
               ))}
             </div>
@@ -406,7 +406,7 @@ export default function ContactPage() {
                   <ArrowRight className="w-4 h-4 relative z-10" strokeWidth={1.5} />
                 </button>
                 <p className="text-[0.78rem] text-[#8B7355] font-light mt-4">
-                  Opens your email app with everything filled in — or write us directly at info@sinzullc.com.
+                  Opens your email app with everything filled in, or write us directly at info@sinzullc.com.
                 </p>
               </div>
             </div>

@@ -222,7 +222,7 @@ export default function HeroSection() {
             className="font-inter text-[14px] md:text-[15px] font-light text-[#5b5348] leading-[1.7] mb-8 max-w-sm anim-fade"
             style={{ animationDelay: "0.85s" }}
           >
-            Timeless jewelry, luxurious hair care, and radiant skincare — crafted to make you shine in every moment.
+            Timeless jewelry, luxurious hair care, and radiant skincare, crafted to make you shine in every moment.
           </p>
 
           <div className="anim-fade" style={{ animationDelay: "1.05s" }}>

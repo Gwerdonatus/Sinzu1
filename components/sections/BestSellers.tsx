@@ -80,7 +80,7 @@ export default function BestSellers() {
           <div className="sb-eyebrow">Most Loved</div>
           <h2 className="sb-title">Best Sellers</h2>
           <p className="sb-sub">
-            The pieces our community keeps coming back for — hand-picked essentials in jewelry, haircare, and skincare.
+            The pieces our community keeps coming back for. Hand-picked essentials in jewelry, haircare, and skincare.
           </p>
         </header>
 

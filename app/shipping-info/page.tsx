@@ -16,8 +16,8 @@ export default function ShippingInfoPage() {
 
       <h2>Shipping Options & Rates</h2>
       <ul>
-        <li><strong>Standard Shipping</strong> — $10.00 · 5–7 business days · <strong>Free on orders over $150</strong></li>
-        <li><strong>Express Shipping</strong> — $25.00 · 2–3 business days</li>
+        <li><strong>Standard Shipping</strong>: $10.00 · 5–7 business days · <strong>Free on orders over $150</strong></li>
+        <li><strong>Express Shipping</strong>: $25.00 · 2–3 business days</li>
       </ul>
       <p>
         All shipping times are estimates once your order is picked up by the carrier. We&apos;re not able to guarantee delivery dates.
@@ -25,12 +25,12 @@ export default function ShippingInfoPage() {
 
       <h2>Where We Ship</h2>
       <p>
-        We currently ship <strong>throughout the United States</strong>, including Alaska, Hawaii, and U.S. territories (additional transit time may apply). International shipping is coming soon — join our newsletter to be notified when it launches.
+        We currently ship <strong>throughout the United States</strong>, including Alaska, Hawaii, and U.S. territories (additional transit time may apply). International shipping is coming soon. Join our newsletter to be notified when it launches.
       </p>
 
       <h2>Local Pickup</h2>
       <p>
-        Free local pickup is available at our Northtown Mall location. Choose &quot;Local Pickup&quot; at checkout, and you&apos;ll receive an email when your order is ready — usually the same day. Starting September 30, 2026, pickup will also be available at Mall of America.
+        Free local pickup is available at our Northtown Mall location. Choose &quot;Local Pickup&quot; at checkout, and you&apos;ll receive an email when your order is ready, usually the same day. Starting September 30, 2026, pickup will also be available at Mall of America.
       </p>
 
       <h2>Order Tracking</h2>

@@ -39,7 +39,7 @@ export interface OrderConfirmationArgs {
 
 /** Customer-facing order confirmation. */
 export function orderConfirmationEmail(args: OrderConfirmationArgs): { subject: string; html: string; text: string } {
-  const subject = `Thank you for your order, ${args.customerFirstName} — SINZU #${args.orderId.slice(-8).toUpperCase()}`;
+  const subject = `Thank you for your order, ${args.customerFirstName}. SINZU #${args.orderId.slice(-8).toUpperCase()}`;
   const orderShort = args.orderId.slice(-8).toUpperCase();
 
   const itemsHtml = args.items.map((li) => `
@@ -159,7 +159,7 @@ export function orderConfirmationEmail(args: OrderConfirmationArgs): { subject: 
     `Your SINZU order #${orderShort} is confirmed.`,
     ``,
     `Order Summary:`,
-    ...args.items.map(li => `  ${li.name} (${li.variation}) x${li.quantity} — ${money(li.priceCents * li.quantity)}`),
+    ...args.items.map(li => `  ${li.name} (${li.variation}) x${li.quantity}: ${money(li.priceCents * li.quantity)}`),
     ``,
     `Subtotal: ${money(args.subtotalCents)}`,
     ...(args.discountCents > 0 ? [`Discount ${args.discountCode || ''}: -${money(args.discountCents)}`] : []),
@@ -173,14 +173,14 @@ export function orderConfirmationEmail(args: OrderConfirmationArgs): { subject: 
     ...(args.receiptUrl ? [`Receipt: ${args.receiptUrl}`, ''] : []),
     `Questions? Reply to this email or call +1 (612) 487-8228.`,
     ``,
-    `— SINZU LLC`,
+    `SINZU LLC`,
     `${SITE}`,
   ].join('\n');
 
   return {
     subject,
     html: emailShell({
-      preheader: `Order #${orderShort} confirmed — ${money(args.totalCents)}. Ships 1–3 business days.`,
+      preheader: `Order #${orderShort} confirmed. ${money(args.totalCents)}. Ships 1–3 business days.`,
       body,
     }),
     text,
@@ -189,14 +189,14 @@ export function orderConfirmationEmail(args: OrderConfirmationArgs): { subject: 
 
 /** Welcome email sent when someone subscribes to the newsletter. */
 export function welcomeEmail(): { subject: string; html: string; text: string } {
-  const subject = 'Welcome to SINZU — here\'s 10% off your first order';
+  const subject = 'Welcome to SINZU. Here\'s 10% off your first order';
 
   const body = `
     <h1 class="h1 headline" style="margin:0 0 12px 0;font-family:Georgia,serif;font-size:28px;font-weight:600;color:#1a1200;line-height:1.2;">
       Welcome to the family.
     </h1>
     <p style="margin:0 0 24px 0;font-size:14px;line-height:1.7;color:#5b5348;">
-      Thanks for joining us. Here&rsquo;s your <strong>10% off</strong> your first order — use it whenever you&rsquo;re ready.
+      Thanks for joining us. Here&rsquo;s your <strong>10% off</strong> your first order. Use it whenever you&rsquo;re ready.
     </p>
 
     <div style="text-align:center;margin:32px 0;padding:32px 24px;background:linear-gradient(135deg,#1a1200,#3d2a0e);border-radius:8px;">
@@ -217,10 +217,10 @@ export function welcomeEmail(): { subject: string; html: string; text: string } 
       What we&rsquo;re about
     </h2>
     <p style="margin:0 0 12px 0;font-size:14px;line-height:1.7;color:#5b5348;">
-      SINZU is a Minnesota retail brand celebrating five years at Northtown Mall — and this September, we&rsquo;re expanding to Mall of America. We handpick every piece of jewelry, every satin bonnet, every ounce of shea butter, so you don&rsquo;t have to.
+      SINZU is a Minnesota retail brand celebrating five years at Northtown Mall, and this September we&rsquo;re expanding to Mall of America. We handpick every piece of jewelry, every satin bonnet, every ounce of shea butter, so you don&rsquo;t have to.
     </p>
     <p style="margin:0 0 24px 0;font-size:14px;line-height:1.7;color:#5b5348;">
-      Watch your inbox for new drops, restocks, and (only occasionally) exclusive offers. No spam — we promise.
+      Watch your inbox for new drops, restocks, and (only occasionally) exclusive offers. No spam, we promise.
     </p>
 
     <div style="margin-top:32px;padding:20px;background:#faf3de;border-radius:6px;text-align:center;">
@@ -245,7 +245,7 @@ export function welcomeEmail(): { subject: string; html: string; text: string } 
     `and expanding to Mall of America on September 30, 2026.`,
     ``,
     `Questions? Reply to this email.`,
-    `— SINZU LLC`,
+    `SINZU LLC`,
   ].join('\n');
 
   return {
@@ -261,7 +261,7 @@ export function welcomeEmail(): { subject: string; html: string; text: string } 
 /** Notification to the owner when a new order lands. */
 export function ownerNewOrderEmail(args: OrderConfirmationArgs & { customerName: string }): { subject: string; html: string; text: string } {
   const orderShort = args.orderId.slice(-8).toUpperCase();
-  const subject = `New order #${orderShort} — ${money(args.totalCents)} from ${args.customerName}`;
+  const subject = `New order #${orderShort}: ${money(args.totalCents)} from ${args.customerName}`;
 
   const body = `
     <h1 class="h1 headline" style="margin:0 0 12px 0;font-family:Georgia,serif;font-size:24px;font-weight:600;color:#1a1200;">
@@ -319,7 +319,7 @@ export function reviewSubmissionEmail(args: {
   title?: string;
   content: string;
 }): { subject: string; html: string; text: string } {
-  const subject = `New review for ${args.productName} — ${args.rating}/5 stars`;
+  const subject = `New review for ${args.productName}: ${args.rating}/5 stars`;
 
   const stars = '★'.repeat(args.rating) + '☆'.repeat(5 - args.rating);
 

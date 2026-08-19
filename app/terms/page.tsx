@@ -31,7 +31,7 @@ export default function TermsPage() {
 
       <h2>5. Intellectual Property</h2>
       <p>
-        All content on this website — including logos, product photography, text, and design — is the property of $INZU or its licensors. You may not reproduce, distribute, or use any content for commercial purposes without written permission.
+        All content on this website, including logos, product photography, text, and design, is the property of $INZU or its licensors. You may not reproduce, distribute, or use any content for commercial purposes without written permission.
       </p>
 
       <h2>6. User Conduct</h2>

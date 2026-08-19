@@ -27,7 +27,7 @@ export const SHIPPING_METHODS: ShippingMethod[] = [
   {
     id: 'pickup',
     label: 'Free Local Pickup',
-    description: 'Pick up at Northtown Mall (Blaine, MN) — usually ready same day',
+    description: 'Pick up at Northtown Mall (Blaine, MN), usually ready same day',
     amount: 0,
     kind: 'PICKUP',
     timeline: [

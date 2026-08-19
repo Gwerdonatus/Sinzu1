@@ -37,7 +37,7 @@ export default function EmailSignup() {
       setStatus('success');
       setMessage(
         data.alreadySubscribed
-          ? "You're already on our list — thank you!"
+          ? "You're already on our list. Thank you!"
           : "You're in. Use WELCOME10 for 10% off your first order."
       );
       if (!data.alreadySubscribed) setEmail('');
@@ -265,7 +265,7 @@ export default function EmailSignup() {
         </h2>
 
         <p className="su-lede anim-fade-up anim-d3">
-          Be the first to hear about new drops, restocks, and the Mall of America opening. No spam — just the good stuff.
+          Be the first to hear about new drops, restocks, and the Mall of America opening. No spam, just the good stuff.
         </p>
 
         <form className="su-form anim-fade-up anim-d3" onSubmit={submit}>
@@ -290,7 +290,7 @@ export default function EmailSignup() {
 
         <p className="su-note anim-fade-up anim-d3">
           <Mail size={12} />
-          We&apos;ll email you your code — check spam if it doesn&apos;t arrive.
+          We&apos;ll email you your code. Check spam if it doesn&apos;t arrive.
         </p>
 
         {status === 'success' && (

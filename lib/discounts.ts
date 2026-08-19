@@ -25,14 +25,14 @@ export interface DiscountCode {
 const CODES: DiscountCode[] = [
   {
     code: 'MOA15',
-    label: 'Mall of America — 15% off',
+    label: 'Mall of America: 15% off',
     kind: 'percent',
     percentOff: 15,
     description: '15% off your order',
   },
   {
     code: 'WELCOME10',
-    label: 'Welcome — 10% off first order',
+    label: 'Welcome: 10% off first order',
     kind: 'percent',
     percentOff: 10,
     description: '10% off your first order',

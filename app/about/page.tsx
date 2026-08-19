@@ -144,7 +144,7 @@ export default function AboutPage() {
     },
     {
       title: 'Cultural Heritage',
-      body: 'Our roots inspire everything we create while embracing a modern global perspective. Culture is not a trend — it is our foundation.',
+      body: 'Our roots inspire everything we create while embracing a modern global perspective. Culture is not a trend. It is our foundation.',
     },
     {
       title: 'Luxury Accessibility',
@@ -393,7 +393,7 @@ export default function AboutPage() {
               SINZU is more than a beauty brand. It is a celebration of intentional living, quality craftsmanship, and products that honor culture while embracing modern luxury.
             </p>
             <p className="text-[1.05rem] leading-[1.85] font-normal text-[#1A1A1A] mb-6">
-              Inspired by African heritage and elevated through contemporary design, every collection — jewelry, haircare, and skincare — reflects quality, simplicity, and quiet confidence.
+              Inspired by African heritage and elevated through contemporary design, every collection across jewelry, haircare, and skincare reflects quality, simplicity, and quiet confidence.
             </p>
 
             {/* The write-up ends on an exit to the shop. A real anchor, not a
@@ -449,13 +449,13 @@ export default function AboutPage() {
               SINZU was created with one vision: to make everyday beauty feel intentional.
             </p>
             <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32] mb-5">
-              Inspired by African heritage and elevated through modern design, every collection — jewelry, haircare, and skincare — reflects quality, simplicity, and confidence.
+              Inspired by African heritage and elevated through modern design, every collection across jewelry, haircare, and skincare reflects quality, simplicity, and confidence.
             </p>
             <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32] mb-5">
               Five years ago, we opened our first kiosk at Northtown Mall in Blaine, Minnesota. What started as a single storefront has grown into a community of everyday people who trust us with their self-care rituals.
             </p>
             <p className="text-[1rem] leading-[1.85] font-normal text-[#5C4A32]">
-              This September, we&apos;re expanding to Mall of America — a milestone that felt impossible when we started, and one we&apos;re proud to share with the community that made it possible.
+              This September, we&apos;re expanding to Mall of America, a milestone that felt impossible when we started, and one we&apos;re proud to share with the community that made it possible.
             </p>
           </div>
         </div>
@@ -473,7 +473,7 @@ export default function AboutPage() {
               Years of Intentional Beauty
             </p>
             <p className="text-[0.8rem] text-white/40 font-light mt-2 tracking-wide">
-              From one kiosk in Blaine to Mall of America — five years in the making.
+              From one kiosk in Blaine to Mall of America. Five years in the making.
             </p>
           </div>
         </div>
@@ -486,7 +486,7 @@ export default function AboutPage() {
         <div className="max-w-[720px] mx-auto text-center fade-up">
           <span className="quote-mark block text-[6rem] text-[#D9B54E] opacity-50 mb-4">&ldquo;</span>
           <p className="font-['Cormorant_Garamond'] text-[clamp(1.4rem,2.5vw,2rem)] font-normal italic leading-[1.55] text-[#1A1A1A] mb-10">
-            We didn&apos;t want to build another beauty brand. We wanted to build a ritual — one that carries where we come from into how people feel every day.
+            We didn&apos;t want to build another beauty brand. We wanted to build a ritual, one that carries where we come from into how people feel every day.
           </p>
           <span className="block text-[0.7rem] font-medium tracking-[0.2em] uppercase text-[#8a7a6a]">Founder, <Sinzu /></span>
         </div>

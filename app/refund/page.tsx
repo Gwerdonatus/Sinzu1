@@ -11,9 +11,9 @@ export default function RefundPage() {
 
       <h2>Eligible Returns</h2>
       <ul>
-        <li><strong>Jewelry</strong> — unworn, in original packaging, within 14 days of delivery.</li>
-        <li><strong>Damaged or defective items</strong> from any category — contact us within 48 hours of delivery.</li>
-        <li><strong>Wrong item shipped</strong> — we&apos;ll cover return shipping and send the correct item.</li>
+        <li><strong>Jewelry</strong>: unworn, in original packaging, within 14 days of delivery.</li>
+        <li><strong>Damaged or defective items</strong> from any category: contact us within 48 hours of delivery.</li>
+        <li><strong>Wrong item shipped</strong>: we&apos;ll cover return shipping and send the correct item.</li>
       </ul>
 
       <h2>Non-Returnable Items</h2>

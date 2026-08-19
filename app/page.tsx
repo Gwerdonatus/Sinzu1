@@ -45,7 +45,7 @@ export default function Home() {
 
       <ConnectSection />
 
-      <ShowLooksSection />
+      <ShowLooksSection products={products} />
 
       <VideoSection />
 

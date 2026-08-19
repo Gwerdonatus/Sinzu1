@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
           : undefined,
         serviceCharges: shippingCost > 0
           ? [{
-              name: `Shipping — ${method.label}`,
+              name: `Shipping: ${method.label}`,
               amountMoney: { amount: BigInt(shippingCost), currency: 'USD' },
               calculationPhase: 'TOTAL_PHASE',
             }]
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
                   },
                   scheduleType: 'ASAP',
                   pickupAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-                  note: 'Local pickup at Northtown Mall — customer will receive an email when ready.',
+                  note: 'Local pickup at Northtown Mall. Customer will receive an email when ready.',
                 },
               }
             : {
@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
             lastName: shippingAddress.lastName,
           }
         : undefined,
-      note: `SINZU ${method.kind === 'PICKUP' ? 'PICKUP' : 'order'} — ${items.length} item(s), ${method.label}${discountCodeStored ? `, code ${discountCodeStored}` : ''}`,
+      note: `SINZU ${method.kind === 'PICKUP' ? 'PICKUP' : 'order'}: ${items.length} item(s), ${method.label}${discountCodeStored ? `, code ${discountCodeStored}` : ''}`,
     });
 
     const payment = paymentResult.payment;

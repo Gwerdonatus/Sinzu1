@@ -9,7 +9,7 @@ const SITE = 'https://sinzu.shop';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: 'SINZU LLC — Everyday Luxury. Made to Stand Out.',
+    default: 'SINZU LLC | Everyday Luxury. Made to Stand Out.',
     template: '%s · SINZU LLC',
   },
   description:
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE,
     siteName: 'SINZU LLC',
-    title: 'SINZU LLC — Everyday Luxury. Made to Stand Out.',
+    title: 'SINZU LLC | Everyday Luxury. Made to Stand Out.',
     description:
       'Culturally-rooted jewelry, premium haircare, and skincare essentials. Shop online or visit us at Northtown Mall + Mall of America (Sept 30, 2026).',
     images: [
@@ -57,14 +57,14 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'SINZU LLC — Everyday Luxury',
+        alt: 'SINZU LLC, Everyday Luxury',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SINZU LLC — Everyday Luxury. Made to Stand Out.',
+    title: 'SINZU LLC | Everyday Luxury. Made to Stand Out.',
     description:
       'Culturally-rooted jewelry, premium haircare, and skincare essentials. Now expanding to Mall of America.',
     images: ['/og-image.png'],

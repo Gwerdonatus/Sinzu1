@@ -212,7 +212,7 @@ function ShopInner() {
         {!loading && products.length === 0 && (
           <div className="text-center py-16">
             <p className="text-gray-500 text-sm mb-2">Our catalog is being restocked.</p>
-            <p className="text-xs text-gray-400">Check back soon — new products are on the way.</p>
+            <p className="text-xs text-gray-400">Check back soon. New products are on the way.</p>
           </div>
         )}
       </div>

@@ -128,7 +128,7 @@ export default function VisitPage() {
                 Mall of America
               </h2>
               <p className="text-[14px] text-[#5b5348] leading-relaxed mb-6">
-                We&apos;re expanding to one of America&apos;s most iconic retail destinations. Our new kiosk at Mall of America opens September 30, 2026 — join our list to be the first to know exact location details, opening events, and grand-opening offers.
+                We&apos;re expanding to one of America&apos;s most iconic retail destinations. Our new kiosk at Mall of America opens September 30, 2026. Join our list to be the first to know exact location details, opening events, and grand-opening offers.
               </p>
               <div className="space-y-4 mb-8">
                 <div className="flex gap-3 text-[14px] text-[#5b5348]">
@@ -146,7 +146,7 @@ export default function VisitPage() {
                     <div className="text-[#1a1200] font-medium">Grand Opening</div>
                     <div>Wednesday, September 30, 2026</div>
                     <div className="text-xs mt-1 text-[#8b6914]">
-                      Show a MOA business card for 15% off — code MOA15
+                      Show a MOA business card for 15% off with code MOA15
                     </div>
                   </div>
                 </div>

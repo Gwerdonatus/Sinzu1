@@ -616,7 +616,7 @@ function CategoryDetails({ category }: { category: string }) {
 
   const sections = {
     jewelry: [
-      { title: 'Materials', body: 'Hypoallergenic base metal, gold or silver-toned finish. Nickel- and lead-free. Individual pieces may vary — see the product description for exact composition.' },
+      { title: 'Materials', body: 'Hypoallergenic base metal, gold or silver-toned finish. Nickel- and lead-free. Individual pieces may vary. See the product description for exact composition.' },
       { title: 'Care Instructions', body: 'To keep your jewelry looking new: avoid contact with water, perfumes, lotions, and cleaning agents. Store each piece in a soft pouch away from other jewelry to prevent scratching. Clean gently with a soft, dry cloth.' },
       { title: 'Sizing & Fit', body: 'Measurements are noted in the product description where applicable. If you\'re between sizes, size up.' },
       { title: 'Sensitivity Note', body: 'While our jewelry is nickel- and lead-free, individuals with metal sensitivities should test wear briefly before extended use.' },
@@ -624,11 +624,11 @@ function CategoryDetails({ category }: { category: string }) {
     haircare: [
       { title: 'Material & Fit', body: 'Premium satin construction to protect hair while you sleep. Adjustable band designed to stay in place without leaving marks. One size fits most adults.' },
       { title: 'Benefits', body: 'Reduces breakage and split ends · Preserves moisture and natural oils · Protects styles overnight · Minimizes friction against pillowcases.' },
-      { title: 'How to Care for It', body: 'Hand wash in cold water with mild detergent. Air dry — do not tumble dry. Iron on low heat if needed. Avoid bleach or fabric softener.' },
+      { title: 'How to Care for It', body: 'Hand wash in cold water with mild detergent. Air dry. Do not tumble dry. Iron on low heat if needed. Avoid bleach or fabric softener.' },
       { title: 'Best For', body: 'All hair types and textures. Especially loved by those with natural, coily, curly, or protective styles.' },
     ],
     skincare: [
-      { title: 'Ingredients', body: 'Formulated with natural, plant-based ingredients. Full ingredient list is on the product packaging — please review before use if you have known sensitivities.' },
+      { title: 'Ingredients', body: 'Formulated with natural, plant-based ingredients. Full ingredient list is on the product packaging. Please review before use if you have known sensitivities.' },
       { title: 'How to Use', body: 'For African Black Soap: lather with warm water and apply to face or body, avoiding the eye area. Rinse thoroughly and follow with moisturizer. For Shea Butter: warm a small amount between your palms and apply to clean skin.' },
       { title: 'Storage', body: 'Store in a cool, dry place away from direct sunlight. Keep the container closed when not in use to preserve freshness.' },
       { title: 'Disclaimer', body: 'For external use only. Discontinue use if irritation occurs. Not intended to diagnose, treat, cure, or prevent any medical condition. If you are pregnant, nursing, or under medical care, consult your healthcare provider before use. Keep out of reach of children.' },

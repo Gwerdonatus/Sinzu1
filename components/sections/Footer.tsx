@@ -181,8 +181,8 @@ export default function Footer() {
                   <ArrowRight size={16} className="text-[#1a1200]/70" />
                 </button>
               </div>
-              {status === 'success' && <p className="text-[11px] text-[#1a1200]/70 mt-2">Welcome — check your inbox for your code.</p>}
-              {status === 'error' && <p className="text-[11px] text-[#7a1e1e] mt-2">Something went wrong — please try again.</p>}
+              {status === 'success' && <p className="text-[11px] text-[#1a1200]/70 mt-2">Welcome! Check your inbox for your code.</p>}
+              {status === 'error' && <p className="text-[11px] text-[#7a1e1e] mt-2">Something went wrong. Please try again.</p>}
             </form>
           </div>
         </div>
