@@ -13,7 +13,6 @@ import EmailSignup from '@/components/sections/EmailSignup';
 import SinzuBodyBanner from '@/components/sections/SinzuBodyBanner';
 import ConnectSection from '@/components/sections/ConnectSection';
 import ShowLooksSection from '@/components/sections/ShowLooksSection';
-import VideoSection from '@/components/sections/VideoSection';
 import { useProducts } from '@/hooks/useProducts';
 
 export default function Home() {
@@ -46,8 +45,6 @@ export default function Home() {
       <ConnectSection />
 
       <ShowLooksSection products={products} />
-
-      <VideoSection />
 
       <EmailSignup />
 
