@@ -177,13 +177,15 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
     //   [SALE:6500]  → shows "$65.00" crossed out + "Sale" badge
     //   [NEW]        → "New" badge
     //   [BESTSELLER] → "Best Seller" badge (also picked up by Best Sellers section)
+    //   [FEATURED]   → pins the item into the homepage Featured row
     // Multiple tags are allowed, e.g. "[NEW][SALE:3500] Summer glow"
     let badge: string | undefined;
     let originalPrice: number | undefined;
+    let featured = false;
     let description = d.description ?? undefined;
 
     // Iteratively strip tags at the head of the description.
-    const tagRe = /^\s*\[(SALE:\d+|NEW|BESTSELLER)\]\s*/i;
+    const tagRe = /^\s*\[(SALE:\d+|NEW|BESTSELLER|FEATURED)\]\s*/i;
     while (description && tagRe.test(description)) {
       const m = description.match(tagRe)!;
       const tag = m[1].toUpperCase();
@@ -194,6 +196,10 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
         badge = badge || 'New';
       } else if (tag === 'BESTSELLER') {
         badge = 'Best Seller';
+      } else if (tag === 'FEATURED') {
+        // Deliberately does not set a badge — being featured is placement,
+        // not a label, so it can coexist with Sale or New.
+        featured = true;
       }
       description = description.replace(m[0], '');
     }
@@ -213,6 +219,7 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
       images: imageUrls.length ? imageUrls : [PLACEHOLDER_IMAGE],
       category: categoryName,
       badge,
+      featured,
       sizes: variations.map((v) => v.name),
       variations,
       inventory: totalInventory > 999 ? 999 : totalInventory,

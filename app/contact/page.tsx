@@ -38,7 +38,7 @@ const FAQS = [
   },
   {
     q: 'Do you restock sold-out items?',
-    a: 'Popular pieces are restocked regularly. Follow @sinzu.world on Instagram or join our email list — restocks are announced there first.',
+    a: 'Popular pieces are restocked regularly. Follow @sinzu.llc on Instagram or join our email list — restocks are announced there first.',
   },
   {
     q: 'Can I change or cancel my order?',
@@ -234,9 +234,9 @@ export default function ContactPage() {
             {
               icon: Instagram,
               title: 'Instagram',
-              value: '@sinzu.world',
+              value: '@sinzu.llc',
               sub: 'DMs, restock news, and your tags.',
-              href: 'https://www.instagram.com/sinzu.world?utm_source=qr',
+              href: 'https://www.instagram.com/sinzu.llc',
             },
             {
               icon: null,

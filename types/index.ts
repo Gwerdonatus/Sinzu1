@@ -16,6 +16,10 @@ export interface Product {
   category: string;           // Square category name (or "Shop")
   subcategory?: string;
   badge?: string;             // "Sale" | "New" etc. (derived from Square custom attribute / category)
+  /** True when the Square description starts with [FEATURED]. Drives the
+   *  homepage Featured row, and is separate from `badge` so an item can be
+   *  featured and on sale at the same time. */
+  featured?: boolean;
   sizes: string[];            // variation names
   variations: ProductVariation[];
   inventory: number;          // total across variations

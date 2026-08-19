@@ -210,7 +210,7 @@ export default function Footer() {
               </svg>
             </Link>
 
-            <Link href="https://www.instagram.com/sinzu.world?utm_source=qr" target="_blank" aria-label="Instagram"
+            <Link href="https://www.instagram.com/sinzu.llc" target="_blank" aria-label="Instagram"
               className="w-10 h-10 rounded-full border border-[#1a1200]/25 flex items-center justify-center hover:border-[#1a1200]/60 hover:bg-[#1a1200]/5 transition-all duration-500">
               <Instagram size={14} className="text-[#1a1200]/70" />
             </Link>

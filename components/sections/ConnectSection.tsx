@@ -123,13 +123,13 @@ export default function ConnectSection() {
         </Link>
 
         <Link
-          href="https://www.instagram.com/sinzu.world"
+          href="https://www.instagram.com/sinzu.llc"
           target="_blank"
           rel="noopener noreferrer"
           className="szn-item"
         >
           <span className="szn-label">Instagram</span>
-          <span className="szn-value">@sinzu.world</span>
+          <span className="szn-value">@sinzu.llc</span>
         </Link>
       </div>
     </section>

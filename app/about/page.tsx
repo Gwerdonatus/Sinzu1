@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import ChatWidget from '@/components/ChatWidget';
@@ -219,6 +220,42 @@ export default function AboutPage() {
         .btn-gold:hover::before { transform: scaleX(1); transform-origin: left; }
         .btn-gold:hover { color: #14110C; border-color: #D9B54E; }
 
+        /* Inline exit from the write-up — the section is a quiet cream block,
+           so this stays a rule-and-arrow rather than another gold pill. */
+        .about-shop-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          margin-top: 0.5rem;
+          padding-bottom: 0.35rem;
+          font-size: 0.65rem;
+          font-weight: 500;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #1A1A1A;
+          text-decoration: none;
+          position: relative;
+          transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .about-shop-link::after {
+          content: '';
+          position: absolute;
+          left: 0; bottom: 0; height: 1px; width: 100%;
+          background: #D9B54E;
+          transform: scaleX(1);
+          transform-origin: right;
+          transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .about-shop-link:hover { color: #8F6415; }
+        .about-shop-link:hover::after { transform: scaleX(0.35); transform-origin: left; }
+        .about-shop-arrow { transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
+        .about-shop-link:hover .about-shop-arrow { transform: translateX(5px); }
+        .about-shop-link:focus-visible { outline: 2px solid #D9B54E; outline-offset: 4px; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .about-shop-link, .about-shop-link::after, .about-shop-arrow { transition: none; }
+        }
+
         .philosophy-card::before {
           content: '';
           position: absolute;
@@ -326,6 +363,14 @@ export default function AboutPage() {
             <p className="text-[1.05rem] leading-[1.85] font-normal text-[#1A1A1A] mb-6">
               Inspired by African heritage and elevated through contemporary design, every collection — jewelry, haircare, and skincare — reflects quality, simplicity, and quiet confidence.
             </p>
+
+            {/* The write-up ends on an exit to the shop. A real anchor, not a
+                click handler, so it opens in a new tab on middle-click and is
+                reachable by keyboard like any other link. */}
+            <Link href="/shop" className="about-shop-link">
+              <span>Shop Now</span>
+              <ArrowRight className="w-3.5 h-3.5 about-shop-arrow" strokeWidth={1.5} />
+            </Link>
 
             {/* Stats row — bold grotesk numerals, like Exvia's 10+ / 40+ / 95% */}
             <div className="mt-20 flex flex-col sm:flex-row gap-8 sm:gap-16 pt-12 border-t border-black/5">

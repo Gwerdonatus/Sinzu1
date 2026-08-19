@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     description:
       'Culturally-rooted jewelry, premium haircare, and skincare essentials. Now expanding to Mall of America.',
     images: ['/og-image.png'],
-    creator: '@sinzu.world',
+    creator: '@sinzu.llc',
   },
   robots: {
     index: true,
@@ -127,7 +127,7 @@ const organizationJsonLd = {
     },
   ],
   sameAs: [
-    'https://www.instagram.com/sinzu.world',
+    'https://www.instagram.com/sinzu.llc',
     'https://facebook.com',
   ],
   potentialAction: {

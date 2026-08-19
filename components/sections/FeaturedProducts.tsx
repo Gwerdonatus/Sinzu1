@@ -5,15 +5,38 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { Product } from "@/types";
 
-/* ── Hardcoded 4 featured products (swap for Square API later) ── */
-const FEATURED_IDS = [
-  'gold-essence-hoops',
-  'shea-baobab-cream',
-  'silk-bonnet',
-  'nourish-growth-oil',
-];
+/* ─────────────────────────────────────────────────────────────
+   Which products appear here is set in Square: put [FEATURED] at
+   the start of an item's description and it lands in this row.
 
-const FALLBACK_IMAGES = ["/jewelry.jpg", "/skin.jpg", "/hair.jpg", "/hair.jpg"];
+   This used to hold four invented products with made-up prices,
+   shown with working Add to Cart buttons because their fake IDs
+   matched nothing in the catalog. Nothing is invented here now —
+   if Square has no featured items the row falls back to real ones.
+   ───────────────────────────────────────────────────────────── */
+
+const MAX_FEATURED = 8;
+
+/** Until anything is tagged, show a spread rather than the first four
+ *  of whatever happens to sort first — nine net sponges in a row reads
+ *  like a bug, not a selection. */
+function fallbackSelection(products: Product[], limit: number): Product[] {
+  const chosen: Product[] = [];
+  const seenCategory = new Set<string>();
+
+  for (const p of products) {
+    if (seenCategory.has(p.category)) continue;
+    seenCategory.add(p.category);
+    chosen.push(p);
+    if (chosen.length === limit) return chosen;
+  }
+  for (const p of products) {
+    if (chosen.includes(p)) continue;
+    chosen.push(p);
+    if (chosen.length === limit) break;
+  }
+  return chosen;
+}
 
 export default function FeaturedProducts({ products }: { products: Product[] }) {
   const [slide, setSlide] = useState(0);
@@ -23,42 +46,21 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Filter to 4 featured only
-  const featured = products
-    .filter((p) => FEATURED_IDS.includes(p.id))
-    .slice(0, 4)
-    .map((product, index) => ({
-      ...product,
-      image:
-        product.image && !product.image.includes("placeholder-product")
-          ? product.image
-          : FALLBACK_IMAGES[index % FALLBACK_IMAGES.length],
-    }));
+  const tagged = products.filter((p) => p.featured);
+  const featured = (tagged.length ? tagged : fallbackSelection(products, MAX_FEATURED)).slice(
+    0,
+    MAX_FEATURED
+  );
 
-  // If fewer than 4 in API, pad with placeholders (remove when Square has all 4)
-  while (featured.length < 4) {
-    const idx = featured.length;
-    featured.push({
-      id: FEATURED_IDS[idx],
-      name: [
-        "Gold Essence Hoop Earrings",
-        "Shea & Baobab Radiance Cream",
-        "Satin Silk Bonnet",
-        "Nourish & Growth Hair Oil",
-      ][idx],
-      price: [3400, 4500, 2800, 3200][idx],
-      category: ["Jewelry", "Skincare", "Hair Care", "Hair Care"][idx],
-      image: FALLBACK_IMAGES[idx],
-      images: [FALLBACK_IMAGES[idx]],
-      sizes: [],
-      variations: [],
-      inventory: 10,
-      badge: idx === 0 ? "New" : undefined,
-    } as Product);
-  }
+  // Cards visible at once, and therefore how many pages the row needs.
+  const perView = isMobile ? 2 : 4;
+  const totalSlides = Math.max(1, Math.ceil(featured.length / perView));
+  const maxSlide = totalSlides - 1;
 
-  const totalSlides = isMobile ? 2 : 1; // 2 slides mobile (2 per), 1 slide desktop (4 per)
-  const maxSlide = Math.max(0, totalSlides - 1);
+  // Fewer cards than fit on screen: a fixed-width track would strand them
+  // against the left edge with a gap where the missing cards would be. A
+  // centred row is the honest layout for two or three featured items.
+  const fitsWithoutCarousel = featured.length <= perView;
 
   // Check mobile
   useEffect(() => {
@@ -76,11 +78,17 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
     setSlide((prev) => (prev <= 0 ? maxSlide : prev - 1));
   }, [maxSlide]);
 
-  // Auto-advance every 6s
+  // Auto-advance every 6s — pointless, and a needless repaint, on one page.
   useEffect(() => {
+    if (totalSlides <= 1) return;
     const timer = setInterval(nextSlide, 6000);
     return () => clearInterval(timer);
-  }, [nextSlide]);
+  }, [nextSlide, totalSlides]);
+
+  // Keep the page in range if the viewport changes under us.
+  useEffect(() => {
+    setSlide((s) => Math.min(s, maxSlide));
+  }, [maxSlide]);
 
   // Touch / drag handling
   const handleDragStart = (clientX: number) => {
@@ -104,8 +112,10 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
     setTranslateX(0);
   };
 
-  // Slide width: 50% mobile (2 visible), 25% desktop (4 visible)
-  const slideWidth = isMobile ? 50 : 25;
+  const slideWidth = 100 / perView;
+
+  // Catalog empty or still loading — show nothing rather than an empty frame.
+  if (featured.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16 bg-white">
@@ -198,7 +208,11 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
       {/* Carousel Container */}
       <div className="relative max-w-[1400px] mx-auto px-4 md:px-8">
         {/* Desktop arrows */}
-        <div className="hidden md:flex absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 justify-between pointer-events-none px-2">
+        <div
+          className={`${
+            fitsWithoutCarousel ? 'hidden' : 'hidden md:flex'
+          } absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 justify-between pointer-events-none px-2`}
+        >
           <button
             onClick={prevSlide}
             disabled={slide === 0}
@@ -220,9 +234,13 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
         {/* Track */}
         <div className="overflow-hidden" ref={containerRef}>
           <div
-            className={`carousel-track flex ${isDragging ? "dragging" : ""}`}
+            className={`carousel-track flex ${fitsWithoutCarousel ? 'justify-center' : ''} ${
+              isDragging ? 'dragging' : ''
+            }`}
             style={{
-              transform: `translateX(calc(-${slide * 100}% + ${translateX}px))`,
+              transform: fitsWithoutCarousel
+                ? undefined
+                : `translateX(calc(-${slide * 100}% + ${translateX}px))`,
             }}
             onMouseDown={(e) => handleDragStart(e.clientX)}
             onMouseMove={(e) => handleDragMove(e.clientX)}
@@ -246,8 +264,9 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
           </div>
         </div>
 
-        {/* Progress indicator */}
-        <div className="mt-8 flex justify-center items-center gap-3">
+        {/* Progress indicator — only when there is more than one page to reach.
+            A "01 / 01" counter under a static row is furniture, not navigation. */}
+        <div className={`mt-8 ${fitsWithoutCarousel ? 'hidden' : 'flex'} justify-center items-center gap-3`}>
           {/* Mobile dots */}
           <div className="flex md:hidden gap-2">
             {Array.from({ length: maxSlide + 1 }).map((_, i) => (

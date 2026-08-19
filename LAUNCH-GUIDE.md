@@ -50,6 +50,7 @@ Sandbox test products won't come with you to production. In your production Squa
 **Badge tags** (put at start of description, they get stripped from display):
 - `[NEW]` → gold "New" badge
 - `[BESTSELLER]` → "Best Seller" badge (also feeds homepage Best Sellers)
+- `[FEATURED]` → pins the item into the **Featured Products** row on the homepage
 - `[SALE:4200]` → shows original $42.00 crossed out (value in cents)
 
 Multiple tags allowed: `[BESTSELLER][SALE:6500] Hand-crafted…`
