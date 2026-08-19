@@ -220,6 +220,33 @@ export default function AboutPage() {
         .btn-gold:hover::before { transform: scaleX(1); transform-origin: left; }
         .btn-gold:hover { color: #14110C; border-color: #D9B54E; }
 
+        /* Giant hero CTA. inline-block so the gold underline tracks the text
+           width rather than the full column, and so the whole word pair is one
+           hit target. */
+        .hero-shop-cta {
+          display: inline-block;
+          position: relative;
+          text-decoration: none;
+          padding-bottom: 0.08em;
+          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hero-shop-cta::after {
+          content: '';
+          position: absolute;
+          left: 0; bottom: 0; height: 2px; width: 100%;
+          background: linear-gradient(90deg, #C89B3C, #FFF6DC, #C89B3C);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hero-shop-cta:hover::after { transform: scaleX(1); }
+        .hero-shop-cta:hover { transform: translateY(-2px); }
+        .hero-shop-cta:focus-visible { outline: 2px solid #D9B54E; outline-offset: 8px; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-shop-cta, .hero-shop-cta::after { transition: none; }
+        }
+
         /* Inline exit from the write-up — the section is a quiet cream block,
            so this stays a rule-and-arrow rather than another gold pill. */
         .about-shop-link {
@@ -333,16 +360,21 @@ export default function AboutPage() {
           </span>
         </div>
 
-        {/* Giant nameplate, anchored to the bottom */}
+        {/* Giant call to action, anchored to the bottom.
+            This was the $INZU wordmark, which the neon sign in the photograph
+            directly above it already says. The most prominent thing on the
+            page now takes the visitor somewhere instead of repeating the name.
+            The heading role moves to the line above so the page still has one. */}
         <div className="relative z-10 w-full px-[5vw] pb-[7vh] fade-up">
-          <p className="text-[0.7rem] font-semibold tracking-[0.3em] uppercase text-white/50 mb-5">
+          <h1 className="text-[0.7rem] font-semibold tracking-[0.3em] uppercase text-white/50 mb-5">
             Luxury Rooted in Culture
-          </p>
-          <h1
-            className="font-['Space_Grotesk'] font-bold gold-shimmer text-[clamp(4.5rem,16vw,12.5rem)] leading-[0.85] tracking-[-0.04em]"
-          >
-            $INZU
           </h1>
+          <Link
+            href="/shop"
+            className="hero-shop-cta font-['Space_Grotesk'] font-bold gold-shimmer text-[clamp(3.2rem,11vw,8.5rem)] leading-[0.85] tracking-[-0.04em]"
+          >
+            Shop Now
+          </Link>
         </div>
       </section>
 
