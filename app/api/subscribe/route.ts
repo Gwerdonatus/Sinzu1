@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Client, Environment } from 'square';
-import { v4 as uuidv4 } from 'uuid';
+import { Client, Environment } from 'square/legacy';
+import { randomUUID } from 'node:crypto';
 import { sendEmail } from '@/lib/email/send';
 import { welcomeEmail } from '@/lib/email/templates';
 
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     await client.customersApi.createCustomer({
-      idempotencyKey: uuidv4(),
+      idempotencyKey: randomUUID(),
       emailAddress: email.toLowerCase(),
       referenceId: `newsletter-${source || 'site'}`,
       note: `Subscribed via ${source || 'site'} on ${new Date().toISOString().slice(0, 10)}`,

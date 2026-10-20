@@ -13,7 +13,7 @@ export default function CountdownTimer() {
   }, []);
   const fmt = (n: number) => n.toString().padStart(2, '0');
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2"><span className="text-lg">🥳</span><span className="font-serif text-sm font-semibold">ARIES COLLECTION</span></div>
         <Clock className="w-4 h-4 text-gray-400" />

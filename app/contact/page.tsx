@@ -1,11 +1,12 @@
 'use client';
 
+import { Instagram } from '@/components/SocialIcons';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import ChatWidget from '@/components/ChatWidget';
 import AnnouncementBar from '@/components/AnnouncementBar';
-import { Clock, Mail, Instagram, ArrowRight, Plus, MapPin, Navigation } from 'lucide-react';
+import { Clock, Mail, ArrowRight, Plus, MapPin, Navigation } from 'lucide-react';
 
 const STORE_LOCATIONS = [
   {
@@ -72,7 +73,7 @@ export default function ContactPage() {
   };
 
   const inputClass =
-    'w-full bg-white gold-border-soft rounded-sm px-5 py-4 text-[0.95rem] text-[#1A1A1A] placeholder-[#B0A48F] outline-none focus:border-[#D9B54E] transition-colors font-light';
+    'w-full bg-white gold-border-soft rounded-xs px-5 py-4 text-[0.95rem] text-[#1A1A1A] placeholder-[#B0A48F] outline-hidden focus:border-[#D9B54E] transition-colors font-light';
 
   const location = STORE_LOCATIONS[activeLocation];
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&output=embed`;
@@ -201,7 +202,7 @@ export default function ContactPage() {
               Questions about an order, a product, or a piece you have your eye on. We read everything, and we reply fast.
             </p>
           </div>
-          <div className="h-[38vh] lg:h-[55vh] min-h-[300px] rounded-sm dark-panel dark-weave fade-up relative overflow-hidden" style={{ transitionDelay: '0.1s' }}>
+          <div className="h-[38vh] lg:h-[55vh] min-h-[300px] rounded-xs dark-panel dark-weave fade-up relative overflow-hidden" style={{ transitionDelay: '0.1s' }}>
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/40 to-transparent" />
           </div>
         </div>
@@ -263,7 +264,7 @@ export default function ContactPage() {
               </>
             );
             const cardClass =
-              'contact-card gold-border-soft relative block p-10 md:p-12 bg-white rounded-sm text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] fade-up';
+              'contact-card gold-border-soft relative block p-10 md:p-12 bg-white rounded-xs text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] fade-up';
             return item.href ? (
               <a
                 key={item.title}
@@ -311,7 +312,7 @@ export default function ContactPage() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            <div className="fade-up rounded-sm overflow-hidden gold-border-soft h-[320px] md:h-[420px]" style={{ transitionDelay: '0.1s' }}>
+            <div className="fade-up rounded-xs overflow-hidden gold-border-soft h-[320px] md:h-[420px]" style={{ transitionDelay: '0.1s' }}>
               <iframe
                 title={`Map to ${location.name}`}
                 src={mapSrc}
@@ -354,7 +355,7 @@ export default function ContactPage() {
       {/* SECTION 3 — MESSAGE FORM */}
       <section className="py-24 md:py-40 px-6 md:px-12 lg:px-16 bg-white">
         <div className="max-w-[1300px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
-          <div className="h-[320px] md:h-[560px] rounded-sm dark-panel dark-weave fade-up relative overflow-hidden lg:sticky lg:top-28" />
+          <div className="h-[320px] md:h-[560px] rounded-xs dark-panel dark-weave fade-up relative overflow-hidden lg:sticky lg:top-28" />
           <div className="fade-up">
             <span className="block text-[0.7rem] font-medium tracking-[0.25em] uppercase text-[#D9B54E] mb-6">
               Write to Us

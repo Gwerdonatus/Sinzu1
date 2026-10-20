@@ -4,10 +4,11 @@ import CollectionPageClient from './CollectionPageClient';
 // route renders dynamically instead of being pre-built.
 export const dynamic = 'force-dynamic';
 
-export default function CollectionPage({
+export default async function CollectionPage({
   params,
 }: {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }) {
-  return <CollectionPageClient category={params.category} />;
+  const { category } = await params;
+  return <CollectionPageClient category={category} />;
 }

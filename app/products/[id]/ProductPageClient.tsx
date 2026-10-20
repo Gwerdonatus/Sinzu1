@@ -234,14 +234,14 @@ export default function ProductPageClient({ id }: { id: string }) {
                       <button 
                         onClick={() => setImg(Math.max(0, img - 1))} 
                         disabled={img === 0}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-sm hover:bg-white"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-xs hover:bg-white"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => setImg(Math.min(images.length - 1, img + 1))} 
                         disabled={img === images.length - 1}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-sm hover:bg-white"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-xs hover:bg-white"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>
@@ -417,14 +417,14 @@ export default function ProductPageClient({ id }: { id: string }) {
                   <button 
                     onClick={() => setImg(Math.max(0, img - 1))} 
                     disabled={img === 0}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-sm"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-xs"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button 
                     onClick={() => setImg(Math.min(images.length - 1, img + 1))} 
                     disabled={img === images.length - 1}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-sm"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 backdrop-blur flex items-center justify-center disabled:opacity-0 transition-opacity shadow-xs"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -644,7 +644,7 @@ function CategoryDetails({ category }: { category: string }) {
       </p>
       <div className="space-y-2">
         {sections[type].map((s) => (
-          <details key={s.title} className="group border border-black/5 rounded">
+          <details key={s.title} className="group border border-black/5 rounded-sm">
             <summary className="cursor-pointer px-3 py-2.5 text-[12px] font-medium text-black font-inter flex items-center justify-between hover:bg-black/[0.02] transition-colors list-none">
               <span>{s.title}</span>
               <ChevronRight className="w-3 h-3 text-black/30 group-open:rotate-90 transition-transform" />

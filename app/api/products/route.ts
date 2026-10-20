@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ products });
   } catch (error: any) {
     const detail = explainSquareError(error);
-    console.error('Failed to load Square catalog:', detail, error);
+    console.error('Failed to load Square catalog:', detail);
     return NextResponse.json(
       { error: 'Failed to load products from Square', detail },
       { status: 500 }

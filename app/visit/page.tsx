@@ -93,7 +93,7 @@ export default function VisitPage() {
               </div>
             </div>
             <div className="order-1 md:order-2">
-              <div className="relative rounded-lg overflow-hidden border border-[#e5dfd0] shadow-sm aspect-[4/3]">
+              <div className="relative rounded-lg overflow-hidden border border-[#e5dfd0] shadow-xs aspect-[4/3]">
                 <iframe
                   title="Northtown Mall map"
                   src={`https://www.google.com/maps?q=${NORTHTOWN_QUERY}&output=embed`}
@@ -110,7 +110,7 @@ export default function VisitPage() {
         <section className="mb-12">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
             <div>
-              <div className="relative rounded-lg overflow-hidden border border-[#e5dfd0] shadow-sm aspect-[4/3]">
+              <div className="relative rounded-lg overflow-hidden border border-[#e5dfd0] shadow-xs aspect-[4/3]">
                 <iframe
                   title="Mall of America map"
                   src={`https://www.google.com/maps?q=${MOA_QUERY}&output=embed`}

@@ -153,7 +153,7 @@ function ShopInner() {
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder="Search products..."
-                className="w-full pl-12 pr-11 py-3 bg-transparent text-sm focus:outline-none font-inter tracking-wide"
+                className="w-full pl-12 pr-11 py-3 bg-transparent text-sm focus:outline-hidden font-inter tracking-wide"
               />
               {searchQuery && (
                 <button aria-label="Clear search" onClick={clearSearch} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors">

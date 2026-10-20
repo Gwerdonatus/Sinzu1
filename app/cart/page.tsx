@@ -32,7 +32,7 @@ export default function CartPage() {
               {items.map(item => (
                 <div key={`${item.id}-${item.size}`} className="flex gap-4 pb-4 border-b border-gray-100">
                   <Link href={`/products/${item.id}`}>
-                    <img src={item.image} alt={item.name} className="w-24 h-32 object-cover rounded" />
+                    <img src={item.image} alt={item.name} className="w-24 h-32 object-cover rounded-sm" />
                   </Link>
                   <div className="flex-1">
                     <Link href={`/products/${item.id}`}>
@@ -41,11 +41,11 @@ export default function CartPage() {
                     <p className="text-xs text-gray-500 mt-1">Size: {item.size}</p>
                     <p className="text-sm font-semibold mt-1">${(item.price / 100).toFixed(2)} USD</p>
                     <div className="flex items-center gap-2 mt-3">
-                      <button aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                      <button aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-8 h-8 border border-gray-200 rounded-sm flex items-center justify-center hover:bg-gray-50">
                         <Minus className="w-3 h-3" />
                       </button>
                       <span className="text-sm w-8 text-center font-medium">{item.quantity}</span>
-                      <button aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                      <button aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-8 h-8 border border-gray-200 rounded-sm flex items-center justify-center hover:bg-gray-50">
                         <Plus className="w-3 h-3" />
                       </button>
                       <button aria-label={`Remove ${item.name}`} onClick={() => removeItem(item.id, item.size)} className="ml-auto p-2 text-gray-400 hover:text-red-500">
@@ -65,10 +65,10 @@ export default function CartPage() {
             </div>
 
             <div className="space-y-3">
-              <button onClick={() => router.push('/checkout')} className="w-full py-3 bg-gray-900 text-white text-sm font-medium tracking-wider uppercase rounded hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+              <button onClick={() => router.push('/checkout')} className="w-full py-3 bg-gray-900 text-white text-sm font-medium tracking-wider uppercase rounded-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
                 Proceed to Checkout <ArrowRight className="w-4 h-4" />
               </button>
-              <button onClick={clearCart} className="w-full py-3 border border-gray-300 text-sm tracking-wider uppercase rounded hover:bg-gray-50 transition-colors">
+              <button onClick={clearCart} className="w-full py-3 border border-gray-300 text-sm tracking-wider uppercase rounded-sm hover:bg-gray-50 transition-colors">
                 Clear Cart
               </button>
               <Link href="/shop" className="block w-full py-3 text-center text-sm text-gray-500 hover:text-gray-900">

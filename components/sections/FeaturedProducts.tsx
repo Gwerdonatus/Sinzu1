@@ -253,7 +253,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
             {featured.map((product, index) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 px-2 md:px-3"
+                className="shrink-0 px-2 md:px-3"
                 style={{ width: `${slideWidth}%` }}
               >
                 <div className="motion-fade-up" style={{ animationDelay: `${0.1 + index * 0.08}s` }}>

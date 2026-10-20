@@ -8,7 +8,7 @@
 // Configuration problems surface at request time instead, with a
 // message that says exactly which variable is missing.
 // ============================================================
-import { Client, Environment } from 'square';
+import { Client, Environment } from 'square/legacy';
 
 export const SQUARE_ENV: 'production' | 'sandbox' =
   process.env.SQUARE_ENVIRONMENT === 'production' ? 'production' : 'sandbox';

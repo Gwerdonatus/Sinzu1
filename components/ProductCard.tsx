@@ -49,7 +49,7 @@ export default function ProductCard({ product }: Props) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link href={`/products/${product.id}`} className="block">
-        {/* SHARP SQUARE IMAGE — 1:1, no rounded corners */}
+        {/* SHARP SQUARE IMAGE — 1:1, no rounded-sm corners */}
         <div className="relative w-full aspect-square overflow-hidden bg-[#f8f6f1] mb-3">
           {!imageLoaded && (
             <div className="absolute inset-0 skeleton-shimmer" />

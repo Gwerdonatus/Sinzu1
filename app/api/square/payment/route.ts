@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import { normalizeCheckoutItems } from '@/lib/checkout-validation';
+import { normalizeCheckoutItems, paymentAttemptKeys } from '@/lib/checkout-validation';
 import { ordersApi, paymentsApi, LOCATION_ID } from '@/lib/square';
 import { fetchProducts } from '@/lib/catalog';
 import { calcShippingCost, getShippingMethod } from '@/lib/shipping';
@@ -16,7 +15,9 @@ interface CheckoutItem {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { sourceId, items: rawItems, shippingMethodId, shippingAddress, discountCode } = body as {
+    const { attemptId, quotedTotal, sourceId, items: rawItems, shippingMethodId, shippingAddress, discountCode } = body as {
+      attemptId: string;
+      quotedTotal: number;
       sourceId: string;
       items: CheckoutItem[];
       shippingMethodId: string;
@@ -38,6 +39,10 @@ export async function POST(request: NextRequest) {
     if (typeof sourceId !== 'string' || !sourceId.trim()) {
       return NextResponse.json({ error: 'Missing payment token' }, { status: 400 });
     }
+    if (!Number.isSafeInteger(quotedTotal) || quotedTotal <= 0) return NextResponse.json({ error: 'A valid quoted total is required', resetAttempt: true }, { status: 400 });
+    let keys;
+    try { keys = paymentAttemptKeys(attemptId); }
+    catch (error) { return NextResponse.json({ error: (error as Error).message, resetAttempt: true }, { status: 400 }); }
     let items: CheckoutItem[];
     try { items = normalizeCheckoutItems(rawItems); }
     catch (error) { return NextResponse.json({ error: (error as Error).message }, { status: 400 }); }
@@ -76,12 +81,6 @@ export async function POST(request: NextRequest) {
         );
       }
       const qty = Math.max(1, Math.floor(Number(item.quantity)));
-      if (v.inventory < qty) {
-        return NextResponse.json(
-          { error: `Not enough stock for "${v.itemName}" (${v.varName}). Only ${v.inventory} left.` },
-          { status: 409 }
-        );
-      }
       subtotal += v.price * qty;
     }
 
@@ -102,10 +101,13 @@ export async function POST(request: NextRequest) {
 
     const total = subtotal - discountCents + shippingCost;
 
+    if (total > quotedTotal) return NextResponse.json({ error: 'Prices have changed. Contact support to confirm this payment attempt before retrying.' }, { status: 409 });
+
     const { result: orderResult } = await ordersApi.createOrder({
-      idempotencyKey: uuidv4(),
+      idempotencyKey: keys.order,
       order: {
         locationId: LOCATION_ID,
+        referenceId: attemptId,
         lineItems: items.map((item) => ({
           catalogObjectId: item.variationId,
           quantity: String(Math.max(1, Math.floor(Number(item.quantity)))),
@@ -136,7 +138,6 @@ export async function POST(request: NextRequest) {
                     phoneNumber: shippingAddress.phone || undefined,
                   },
                   scheduleType: 'ASAP',
-                  pickupAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
                   note: 'Local pickup at Northtown Mall. Customer will receive an email when ready.',
                 },
               }
@@ -185,38 +186,55 @@ export async function POST(request: NextRequest) {
         {
           error:
             'We could not complete this order because the total did not match what was quoted. ' +
-            'You have not been charged. Please contact hello@sinzu.shop and we will take care of it.',
+            'Please contact hello@sinzu.shop to confirm the order status before trying again.',
         },
         { status: 409 }
       );
     }
     const chargeAmount = order.totalMoney?.amount ?? BigInt(total);
 
-    const { result: paymentResult } = await paymentsApi.createPayment({
-      idempotencyKey: uuidv4(),
-      sourceId,
-      amountMoney: { amount: chargeAmount, currency: 'USD' },
-      orderId: order.id,
-      locationId: LOCATION_ID,
-      buyerEmailAddress: shippingAddress.email,
-      shippingAddress: method.kind === 'SHIPMENT'
-        ? {
-            addressLine1: shippingAddress.addressLine1,
-            addressLine2: shippingAddress.addressLine2 || undefined,
-            locality: shippingAddress.city,
-            administrativeDistrictLevel1: shippingAddress.state,
-            postalCode: shippingAddress.postalCode,
-            country: shippingAddress.country,
-            firstName: shippingAddress.firstName,
-            lastName: shippingAddress.lastName,
-          }
-        : undefined,
-      note: `SINZU ${method.kind === 'PICKUP' ? 'PICKUP' : 'order'}: ${items.length} item(s), ${method.label}${discountCodeStored ? `, code ${discountCodeStored}` : ''}`,
-    });
-
-    const payment = paymentResult.payment;
+    // Square stores the attempt via its idempotency keys. Reconcile an already
+    // paid order before stock validation: a successful first request may have
+    // consumed the last unit while its HTTP response was lost.
+    const { result: freshOrder } = await ordersApi.retrieveOrder(order.id);
+    let payment;
+    for (const tender of freshOrder.order?.tenders ?? []) {
+      if (!tender.paymentId) continue;
+      const { result } = await paymentsApi.getPayment(tender.paymentId);
+      if (result.payment?.status === 'COMPLETED') { payment = result.payment; break; }
+    }
+    if (!payment) {
+      for (const item of items) {
+        const v = variationLookup.get(item.variationId)!;
+        if (v.inventory < item.quantity) {
+          return NextResponse.json({ error: `Not enough stock for "${v.itemName}" (${v.varName}). Please contact support if this is a payment retry.`, orderId: order.id }, { status: 409 });
+        }
+      }
+      const { result: paymentResult } = await paymentsApi.createPayment({
+        idempotencyKey: keys.payment,
+        sourceId,
+        amountMoney: { amount: chargeAmount, currency: 'USD' },
+        orderId: order.id,
+        locationId: LOCATION_ID,
+        buyerEmailAddress: shippingAddress.email,
+        shippingAddress: method.kind === 'SHIPMENT'
+          ? {
+              addressLine1: shippingAddress.addressLine1,
+              addressLine2: shippingAddress.addressLine2 || undefined,
+              locality: shippingAddress.city,
+              administrativeDistrictLevel1: shippingAddress.state,
+              postalCode: shippingAddress.postalCode,
+              country: shippingAddress.country,
+              firstName: shippingAddress.firstName,
+              lastName: shippingAddress.lastName,
+            }
+          : undefined,
+        note: `SINZU ${method.kind === 'PICKUP' ? 'PICKUP' : 'order'}: ${items.length} item(s), ${method.label}${discountCodeStored ? `, code ${discountCodeStored}` : ''}`,
+      });
+      payment = paymentResult.payment;
+    }
     if (!payment || payment.status !== 'COMPLETED') {
-      return NextResponse.json({ error: 'Payment has not completed. Please contact support before retrying.', orderId: order.id, status: payment?.status }, { status: 409 });
+      return NextResponse.json({ error: 'Payment has not completed. Please contact support before retrying.', orderId: order.id, status: payment?.status, resetAttempt: payment?.status === 'FAILED' || payment?.status === 'CANCELED' }, { status: 409 });
     }
     let emailed = false;
 
@@ -261,8 +279,8 @@ export async function POST(request: NextRequest) {
       // failed send is logged and reported, never fatal.
       try {
         const [toCustomer, toOwner] = await Promise.all([
-          sendEmail({ to: shippingAddress.email, ...custEmail, replyTo: OWNER_EMAIL }),
-          sendEmail({ to: OWNER_EMAIL, ...ownerEmail, replyTo: shippingAddress.email }),
+          sendEmail({ to: shippingAddress.email, ...custEmail, replyTo: OWNER_EMAIL, idempotencyKey: `order-${order.id}-customer` }),
+          sendEmail({ to: OWNER_EMAIL, ...ownerEmail, replyTo: shippingAddress.email, idempotencyKey: `order-${order.id}-owner` }),
         ]);
         emailed = toCustomer.ok && toOwner.ok;
         if (!emailed) {
@@ -290,10 +308,11 @@ export async function POST(request: NextRequest) {
       discountCode: discountCodeStored,
     });
   } catch (error: any) {
-    console.error('Square payment error:', error);
-    const squareMessage = error?.result?.errors?.[0]?.detail || error?.errors?.[0]?.detail;
+    const code = error?.result?.errors?.[0]?.code || error?.errors?.[0]?.code;
+    console.error('Square payment error', { code, statusCode: error?.statusCode });
+    const declined = ['CARD_DECLINED', 'CVV_FAILURE', 'ADDRESS_VERIFICATION_FAILURE', 'CARD_EXPIRED', 'INSUFFICIENT_FUNDS'].includes(code);
     return NextResponse.json(
-      { error: 'We could not complete the payment. Please contact support if you are unsure whether a payment went through.' },
+      { error: declined ? 'Your card was declined. Check your card details or use another card.' : 'We could not confirm the payment. Retry the same attempt or contact support before starting another order.', resetAttempt: declined },
       { status: 500 }
     );
   }

@@ -29,6 +29,7 @@ export interface SendEmailArgs {
   html: string;
   text?: string;
   replyTo?: string;
+  idempotencyKey?: string;
 }
 
 export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; error?: string }> {
@@ -44,7 +45,7 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; err
       html: args.html,
       text: args.text,
       replyTo: args.replyTo || REPLY_TO,
-    });
+    }, { idempotencyKey: args.idempotencyKey });
     if (error) {
       console.error('[email:error]', error);
       return { ok: false, error: error.message };

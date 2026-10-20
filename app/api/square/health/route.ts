@@ -14,7 +14,6 @@ import {
   SQUARE_ENV,
   configProblems,
   explainSquareError,
-  tokenFingerprint,
   deploymentInfo,
 } from '@/lib/square';
 import { fetchProducts, getSkippedItems } from '@/lib/catalog';
@@ -31,7 +30,6 @@ export async function GET() {
     environment: SQUARE_ENV,
     locationId: LOCATION_ID,
     applicationId: process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID ?? null,
-    token: tokenFingerprint(),
     deployment: deploymentInfo(),
   };
 

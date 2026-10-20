@@ -104,7 +104,7 @@ export default function Header() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && runSearch()}
               autoFocus
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-hidden focus:border-yellow-500"
             />
           </div>
         )}
@@ -169,17 +169,17 @@ export default function Header() {
               <div className="space-y-4 mb-6">
                 {items.map((item, idx) => (
                   <div key={`${item.id}-${item.size}`} className="flex gap-3 pb-4 border-b border-gray-100">
-                    <img src={item.image} alt={item.name} className="w-20 h-24 object-cover rounded" />
+                    <img src={item.image} alt={item.name} className="w-20 h-24 object-cover rounded-sm" />
                     <div className="flex-1">
                       <h4 className="text-sm font-medium line-clamp-2">{item.name}</h4>
                       <p className="text-xs text-gray-500 mt-1">Size: {item.size}</p>
                       <p className="text-sm font-semibold mt-1">${(item.price / 100).toFixed(2)} USD</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <button aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                        <button aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-7 h-7 border border-gray-200 rounded-sm flex items-center justify-center hover:bg-gray-50">
                           <Minus className="w-3 h-3" />
                         </button>
                         <span className="text-sm w-6 text-center">{item.quantity}</span>
-                        <button aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                        <button aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-7 h-7 border border-gray-200 rounded-sm flex items-center justify-center hover:bg-gray-50">
                           <Plus className="w-3 h-3" />
                         </button>
                         <button aria-label={`Remove ${item.name}`} onClick={() => removeItem(item.id, item.size)} className="ml-auto p-1 text-gray-400 hover:text-red-500">
@@ -205,11 +205,11 @@ export default function Header() {
                   <span className="text-base font-bold">${(totalPrice / 100).toFixed(2)} USD</span>
                 </div>
                 <Link href="/checkout" onClick={() => setIsOpen(false)}>
-                  <button className="w-full py-3 bg-gray-900 text-white text-sm font-medium tracking-wider uppercase rounded hover:bg-gray-800 transition-colors">
+                  <button className="w-full py-3 bg-gray-900 text-white text-sm font-medium tracking-wider uppercase rounded-sm hover:bg-gray-800 transition-colors">
                     Checkout
                   </button>
                 </Link>
-                <button onClick={() => setIsOpen(false)} className="w-full py-3 mt-2 border border-gray-300 text-sm tracking-wider uppercase rounded hover:bg-gray-50 transition-colors">
+                <button onClick={() => setIsOpen(false)} className="w-full py-3 mt-2 border border-gray-300 text-sm tracking-wider uppercase rounded-sm hover:bg-gray-50 transition-colors">
                   Continue Shopping
                 </button>
               </div>

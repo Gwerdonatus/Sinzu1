@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import ChatWidget from '@/components/ChatWidget';
@@ -67,30 +67,33 @@ type SuccessData = {
 };
 
 const inputClass =
-  'w-full px-3 py-2.5 bg-white border border-black/10 rounded text-sm focus:outline-none focus:border-black/30 transition-all';
+  'w-full px-3 py-2.5 bg-white border border-black/10 rounded-sm text-sm focus:outline-hidden focus:border-black/30 transition-all';
+
+const EMPTY_ADDRESS = { firstName: '', lastName: '', email: '', phone: '', addressLine1: '', addressLine2: '', city: '', state: '', postalCode: '', country: 'US' };
+type PendingPayment = {
+  attemptId: string; sourceId: string; createdAt: number; total: number;
+  items: CartItem[]; address: typeof EMPTY_ADDRESS; shippingMethodId: string;
+  discount: { code: string; description: string; amountCents: number } | null;
+};
+const ATTEMPT_STORAGE = 'sinzu-checkout-attempt-v1';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState<SuccessData | null>(null);
   const [card, setCard] = useState<any>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [pendingAttempt, setPendingAttempt] = useState<PendingPayment | null>(null);
+  const [restoringAttempt, setRestoringAttempt] = useState(true);
+  const [restoreBlocked, setRestoreBlocked] = useState(false);
+  const submitting = useRef(false);
+  const checkoutItems = pendingAttempt?.items ?? items;
+  const checkoutSubtotal = checkoutItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const [shippingMethodId, setShippingMethodId] = useState(SHIPPING_METHODS[0].id);
-  const [addr, setAddr] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: 'US',
-  });
+  const [addr, setAddr] = useState(EMPTY_ADDRESS);
 
   const [discountInput, setDiscountInput] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState<{
@@ -101,12 +104,27 @@ export default function CheckoutPage() {
   const [discountError, setDiscountError] = useState('');
   const [discountLoading, setDiscountLoading] = useState(false);
 
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(ATTEMPT_STORAGE);
+      if (raw) {
+        const saved = JSON.parse(raw) as PendingPayment;
+        if (!saved.attemptId || !saved.sourceId || !Array.isArray(saved.items) || !saved.address || !Number.isFinite(saved.createdAt)) throw new Error('Invalid saved attempt');
+        setPendingAttempt(saved);
+        setAddr(saved.address);
+        setShippingMethodId(saved.shippingMethodId);
+        setAppliedDiscount(saved.discount);
+      }
+    } catch { setRestoreBlocked(true); setError('We could not restore your previous checkout. Contact support before making another payment.'); }
+    setRestoringAttempt(false);
+  }, []);
+
   const shippingCost = useMemo(
-    () => calcShippingCost(shippingMethodId, totalPrice),
-    [shippingMethodId, totalPrice]
+    () => calcShippingCost(shippingMethodId, checkoutSubtotal),
+    [shippingMethodId, checkoutSubtotal]
   );
   const discountAmount = appliedDiscount?.amountCents ?? 0;
-  const orderTotal = Math.max(0, totalPrice - discountAmount) + shippingCost;
+  const orderTotal = Math.max(0, checkoutSubtotal - discountAmount) + shippingCost;
 
   const applyDiscount = async () => {
     if (!discountInput.trim()) return;
@@ -200,76 +218,63 @@ export default function CheckoutPage() {
   };
 
   const handlePayment = useCallback(async () => {
-    if (loading) return;
-    if (!card) {
-      setError('Payment system not ready. Please wait a moment.');
-      return;
+    if (submitting.current || restoringAttempt || restoreBlocked) return;
+    if (!pendingAttempt) {
+      if (!card) { setError('Payment system not ready. Please wait a moment.'); return; }
+      if (!items.length) { setError('Your cart is empty'); return; }
+      const shippingError = validateShipping();
+      if (shippingError) { setError(shippingError); return; }
     }
-    if (items.length === 0) {
-      setError('Your cart is empty');
-      return;
+    if (pendingAttempt && Date.now() - pendingAttempt.createdAt > 23 * 60 * 60 * 1000) {
+      setError('This payment attempt needs support to confirm its status. Do not place another order until it is checked.'); return;
     }
-    const shippingError = validateShipping();
-    if (shippingError) {
-      setError(shippingError);
-      return;
-    }
-
+    submitting.current = true;
     setLoading(true);
     setError('');
-
     try {
-      const result = await card.tokenize();
-      if (result.status !== 'OK') {
-        setError(result.errors?.[0]?.message || 'Card validation failed');
-        setLoading(false);
-        return;
+      let attempt = pendingAttempt;
+      if (!attempt) {
+        const result = await card.tokenize();
+        if (result.status !== 'OK') { setError(result.errors?.[0]?.message || 'Card validation failed'); return; }
+        attempt = { attemptId: crypto.randomUUID(), sourceId: result.token, createdAt: Date.now(), total: orderTotal,
+          items: [...items], address: { ...addr }, shippingMethodId, discount: appliedDiscount };
+        // Persist BEFORE sending. A lost response or refresh must not create a
+        // newly tokenized payment. Never store raw card details.
+        sessionStorage.setItem(ATTEMPT_STORAGE, JSON.stringify(attempt));
+        setPendingAttempt(attempt);
       }
-
       const response = await fetch('/api/square/payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sourceId: result.token,
-          items: items.map((i) => ({ variationId: i.variantId, quantity: i.quantity })),
-          shippingMethodId,
-          shippingAddress: addr,
-          discountCode: appliedDiscount?.code,
+          attemptId: attempt.attemptId, sourceId: attempt.sourceId,
+          items: attempt.items.map((item) => ({ variationId: item.variantId, quantity: item.quantity })),
+          shippingMethodId: attempt.shippingMethodId, shippingAddress: attempt.address,
+          discountCode: attempt.discount?.code, quotedTotal: attempt.total,
         }),
       });
-
       const data = await response.json();
-
       if (!response.ok || data.error || data.success !== true || data.status !== 'COMPLETED') {
-        setError(data.error || 'Payment failed. Please try again.');
-        setLoading(false);
+        if (data.resetAttempt === true) { sessionStorage.removeItem(ATTEMPT_STORAGE); setPendingAttempt(null); }
+        setError(data.error || 'We could not confirm this payment. Retry the same attempt or contact support.');
         return;
       }
-
-      const chosenMethod = SHIPPING_METHODS.find((m) => m.id === shippingMethodId)!;
-      setSuccess({
-        receiptUrl: data.receiptUrl,
-        orderId: data.orderId,
-        emailed: data.emailed,
-        charged: data.charged,
-        subtotal: data.subtotal,
-        shipping: data.shipping,
-        discount: data.discount,
-        discountCode: data.discountCode,
-        method: chosenMethod,
-        items: [...items],
-        address: { ...addr },
-      });
+      const chosenMethod = SHIPPING_METHODS.find((method) => method.id === attempt.shippingMethodId)!;
+      setSuccess({ receiptUrl: data.receiptUrl, orderId: data.orderId, emailed: data.emailed,
+        charged: data.charged, subtotal: data.subtotal, shipping: data.shipping,
+        discount: data.discount, discountCode: data.discountCode, method: chosenMethod,
+        items: attempt.items, address: attempt.address });
+      sessionStorage.removeItem(ATTEMPT_STORAGE);
+      setPendingAttempt(null);
       clearCart();
-    } catch (err: any) {
-      console.error('Payment error:', err);
-      setError(err.message || 'An unexpected error occurred');
-    } finally {
-      setLoading(false);
-    }
-  }, [card, items, shippingMethodId, addr, clearCart, appliedDiscount, loading]);
+    } catch {
+      setError('We could not confirm the payment. Retry the same attempt below or contact support before placing another order.');
+    } finally { submitting.current = false; setLoading(false); }
+  }, [card, items, shippingMethodId, addr, clearCart, appliedDiscount, pendingAttempt, restoringAttempt, restoreBlocked, orderTotal]);
 
-  if (items.length === 0 && !success) {
+  if (restoreBlocked) return <main className="min-h-screen bg-white"><AnnouncementBar /><Header /><p role="alert" className="text-center py-24 px-4">We could not restore checkout safely. Please contact hello@sinzu.shop before making another payment.</p></main>;
+  if (restoringAttempt) return <main className="min-h-screen bg-white"><AnnouncementBar /><Header /><p role="status" className="text-center py-24">Restoring checkout…</p></main>;
+
+  if (checkoutItems.length === 0 && !success) {
     return (
       <main className="min-h-screen bg-white">
         <AnnouncementBar /><Header />
@@ -365,7 +370,7 @@ export default function CheckoutPage() {
             <div className="space-y-3 mb-4">
               {success.items?.map((item) => (
                 <div key={`${item.id}-${item.size}`} className="flex gap-3">
-                  <img src={item.image} alt={item.name} className="w-14 h-16 object-cover rounded" />
+                  <img src={item.image} alt={item.name} className="w-14 h-16 object-cover rounded-sm" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-black">{item.name}</p>
                     <p className="text-xs text-black/40">{item.size} · Qty {item.quantity}</p>
@@ -472,12 +477,14 @@ export default function CheckoutPage() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="font-serif text-2xl font-bold mb-6 text-center">Checkout</h1>
 
+        {pendingAttempt && <div role="status" className="border border-amber-300 bg-amber-50 rounded-lg p-4 mb-4 text-sm">A payment attempt is saved. Retry the original payment below to confirm its outcome. Do not start another order. Reference: {pendingAttempt.attemptId}</div>}
+        <fieldset disabled={loading || !!pendingAttempt}>
         <div className="bg-black/[0.02] rounded-lg p-4 mb-6">
           <h2 className="text-sm font-semibold mb-3 uppercase tracking-wider">Order Summary</h2>
           <div className="space-y-3">
-            {items.map(item => (
+            {checkoutItems.map(item => (
               <div key={`${item.id}-${item.size}`} className="flex gap-3">
-                <img src={item.image} alt={item.name} className="w-16 h-20 object-cover rounded" />
+                <img src={item.image} alt={item.name} className="w-16 h-20 object-cover rounded-sm" />
                 <div className="flex-1">
                   <h4 className="text-sm font-medium">{item.name}</h4>
                   <p className="text-xs text-black/40">Size: {item.size} × {item.quantity}</p>
@@ -487,7 +494,7 @@ export default function CheckoutPage() {
             ))}
           </div>
           <div className="border-t border-black/10 mt-4 pt-4 space-y-2">
-            <div className="flex justify-between text-sm"><span className="text-black/50">Subtotal</span><span>${(totalPrice / 100).toFixed(2)} USD</span></div>
+            <div className="flex justify-between text-sm"><span className="text-black/50">Subtotal</span><span>${(checkoutSubtotal / 100).toFixed(2)} USD</span></div>
             {appliedDiscount && (
               <div className="flex justify-between text-sm">
                 <span className="text-black font-medium flex items-center gap-1.5">
@@ -508,7 +515,7 @@ export default function CheckoutPage() {
 
           <div className="mt-4 pt-4 border-t border-black/10">
             {appliedDiscount ? (
-              <div className="flex items-center justify-between p-3 bg-black/[0.03] border border-black/10 rounded">
+              <div className="flex items-center justify-between p-3 bg-black/[0.03] border border-black/10 rounded-sm">
                 <div className="text-xs">
                   <div className="font-medium text-black">
                     <Tag className="w-3.5 h-3.5 inline mr-1" />
@@ -538,7 +545,7 @@ export default function CheckoutPage() {
                   <button
                     onClick={applyDiscount}
                     disabled={discountLoading || !discountInput.trim()}
-                    className="px-4 py-2 bg-black text-white text-[11px] font-medium tracking-[0.2em] uppercase rounded hover:bg-black/80 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-black text-white text-[11px] font-medium tracking-[0.2em] uppercase rounded-sm hover:bg-black/80 transition-colors disabled:opacity-50"
                   >
                     {discountLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Apply'}
                   </button>
@@ -576,7 +583,7 @@ export default function CheckoutPage() {
                 <input className={inputClass} aria-label="First name *" placeholder="First name *" value={addr.firstName} onChange={setField('firstName')} autoComplete="given-name" />
                 <input className={inputClass} aria-label="Last name *" placeholder="Last name *" value={addr.lastName} onChange={setField('lastName')} autoComplete="family-name" />
                 <input className={`${inputClass} col-span-2`} type="email" aria-label="Email *" placeholder="Email *" value={addr.email} onChange={setField('email')} autoComplete="email" />
-                <input className={`${inputClass} col-span-2`} type="tel" placeholder={isPickup ? "Phone * (we'll text when ready)" : "Phone (optional)"} value={addr.phone} onChange={setField('phone')} autoComplete="tel" />
+                <input className={`${inputClass} col-span-2`} type="tel" aria-label={isPickup ? "Phone number required for pickup" : "Phone number optional"} placeholder={isPickup ? "Phone * (we'll text when ready)" : "Phone (optional)"} value={addr.phone} onChange={setField('phone')} autoComplete="tel" />
                 {!isPickup && (
                   <>
                     <input className={`${inputClass} col-span-2`} aria-label="Street address *" placeholder="Street address *" value={addr.addressLine1} onChange={setField('addressLine1')} autoComplete="address-line1" />
@@ -596,13 +603,13 @@ export default function CheckoutPage() {
           <h2 className="text-sm font-semibold mb-3 uppercase tracking-wider">Delivery Method</h2>
           <div className="space-y-2">
             {SHIPPING_METHODS.map((method) => {
-              const cost = calcShippingCost(method.id, totalPrice);
+              const cost = calcShippingCost(method.id, checkoutSubtotal);
               const selected = shippingMethodId === method.id;
               return (
                 <button
                   key={method.id}
                   onClick={() => setShippingMethodId(method.id)}
-                  className={`w-full flex items-center justify-between p-3 rounded border text-left transition-all ${
+                  className={`w-full flex items-center justify-between p-3 rounded-sm border text-left transition-all ${
                     selected ? 'border-black bg-black/[0.02]' : 'border-black/10 hover:border-black/30'
                   }`}
                 >
@@ -622,13 +629,14 @@ export default function CheckoutPage() {
               );
             })}
           </div>
-          {totalPrice < FREE_SHIPPING_THRESHOLD && (
+          {checkoutSubtotal < FREE_SHIPPING_THRESHOLD && (
             <p className="text-[11px] text-black/30 mt-2">
               Free standard shipping on orders over ${(FREE_SHIPPING_THRESHOLD / 100).toFixed(0)}
             </p>
           )}
         </div>
 
+        </fieldset>
         <div className="border border-black/10 rounded-lg p-4 mb-4">
           <h2 className="text-sm font-semibold mb-3 uppercase tracking-wider flex items-center gap-2">
             <CreditCard className="w-4 h-4" /> Payment
@@ -636,7 +644,7 @@ export default function CheckoutPage() {
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+              <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
@@ -652,10 +660,10 @@ export default function CheckoutPage() {
 
           <button
             onClick={handlePayment}
-            disabled={loading || !card}
-            className="w-full py-3 bg-black text-white text-sm font-medium tracking-wider uppercase rounded hover:bg-black/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            disabled={loading || (!card && !pendingAttempt)}
+            className="w-full py-3 bg-black text-white text-sm font-medium tracking-wider uppercase rounded-sm hover:bg-black/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</> : `Pay $${(orderTotal / 100).toFixed(2)} USD`}
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</> : `${pendingAttempt ? 'Retry original payment' : 'Pay'} $${((pendingAttempt?.total ?? orderTotal) / 100).toFixed(2)} USD`}
           </button>
         </div>
 

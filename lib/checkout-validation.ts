@@ -11,3 +11,10 @@ export function normalizeCheckoutItems(value: unknown): { variationId: string; q
   }
   return Array.from(quantities, ([variationId, quantity]) => ({ variationId, quantity }));
 }
+
+export function paymentAttemptKeys(attemptId: unknown) {
+  if (typeof attemptId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(attemptId)) {
+    throw new Error('A valid checkout attempt is required');
+  }
+  return { order: `order-${attemptId}`, payment: `pay-${attemptId}` };
+}

@@ -109,20 +109,24 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
   const inventoryByVariation = new Map<string, number>();
   for (let i = 0; i < variationIds.length; i += 100) {
     const batch = variationIds.slice(i, i + 100);
-    try {
+    let cursor: string | undefined;
+    do {
+      // An API failure must reach the caller; it is not evidence of stock.
       const { result } = await inventoryApi.batchRetrieveInventoryCounts({
         catalogObjectIds: batch,
         locationIds: [LOCATION_ID],
+        states: ['IN_STOCK'],
+        cursor,
       });
       for (const count of result.counts ?? []) {
         if (count.state === 'IN_STOCK' && count.catalogObjectId) {
-          inventoryByVariation.set(count.catalogObjectId, Number(count.quantity ?? 0));
+          const quantity = Number(count.quantity);
+          if (!Number.isFinite(quantity) || quantity < 0) throw new Error('Square returned an invalid stock count');
+          inventoryByVariation.set(count.catalogObjectId, Math.floor(quantity));
         }
       }
-    } catch (e) {
-      // If inventory tracking isn't enabled for some items, treat them as in stock.
-      console.warn('Inventory fetch failed for a batch — items default to in stock.', e);
-    }
+      cursor = result.cursor ?? undefined;
+    } while (cursor);
   }
 
   // 3) Map Square items -> UI products.
@@ -136,14 +140,15 @@ export async function fetchProducts(forceFresh = false): Promise<Product[]> {
       .filter((v: any) => v.itemVariationData?.priceMoney?.amount != null)
       .map((v: any) => {
         const vd = v.itemVariationData ?? {};
-        const tracked = inventoryByVariation.has(v.id);
+        const override = (vd.locationOverrides ?? []).find((entry: any) => entry.locationId === LOCATION_ID);
+        const tracked = override?.trackInventory ?? vd.trackInventory ?? false;
         return {
           id: v.id,
           name: vd.name || 'One size',
           price: Number(vd.priceMoney.amount),
           // Untracked variations are shown as available (999) so items
           // without inventory tracking can still be purchased.
-          inventory: tracked ? inventoryByVariation.get(v.id)! : 999,
+          inventory: tracked ? (inventoryByVariation.get(v.id) ?? 0) : 999,
         };
       });
 

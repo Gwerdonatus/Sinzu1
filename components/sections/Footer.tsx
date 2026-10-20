@@ -1,6 +1,7 @@
 "use client";
 
-import { Instagram, Facebook, ArrowRight, MapPin, Phone, Mail } from "lucide-react";
+import { Instagram, Facebook } from '@/components/SocialIcons';
+import { ArrowRight, MapPin, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -176,7 +177,7 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={status === 'loading'}
-                  className="flex-1 bg-transparent font-body text-[13px] placeholder:text-[#1a1200]/40 focus:outline-none text-[#1a1200] py-1 tracking-wide"
+                  className="flex-1 bg-transparent font-body text-[13px] placeholder:text-[#1a1200]/40 focus:outline-hidden text-[#1a1200] py-1 tracking-wide"
                 />
                 <button type="submit" disabled={status === 'loading'} aria-label="Subscribe" className="w-9 h-9 flex items-center justify-center hover:opacity-60 transition-opacity">
                   <ArrowRight size={16} className="text-[#1a1200]/70" />
@@ -219,7 +220,7 @@ export default function Footer() {
 
           <div className="flex md:justify-end items-center gap-2 flex-wrap">
             {['Visa', 'Mastercard', 'Amex', 'Discover'].map((name) => (
-              <span key={name} title={name} className="text-[9px] font-medium tracking-[0.14em] uppercase px-2.5 py-1.5 rounded border border-[#1a1200]/25 text-[#1a1200]/65 bg-[#1a1200]/5">
+              <span key={name} title={name} className="text-[9px] font-medium tracking-[0.14em] uppercase px-2.5 py-1.5 rounded-sm border border-[#1a1200]/25 text-[#1a1200]/65 bg-[#1a1200]/5">
                 {name}
               </span>
             ))}
