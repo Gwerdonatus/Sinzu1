@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Menu, X, Search, ShoppingBag, Minus, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -12,6 +12,31 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { items, totalItems, totalPrice, isOpen, setIsOpen, updateQuantity, removeItem } = useCart();
+
+  const menuRef = useRef<HTMLDivElement>(null);
+  const cartRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (menuRef.current) menuRef.current.inert = !menuOpen;
+    if (cartRef.current) cartRef.current.inert = !isOpen;
+    if (!menuOpen && !isOpen) return;
+    const panel = isOpen ? cartRef.current : menuRef.current;
+    const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const focusable = () => Array.from(panel?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled])') || []);
+    focusable()[0]?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setMenuOpen(false); setIsOpen(false); }
+      if (event.key === 'Tab') {
+        const nodes = focusable();
+        const first = nodes[0], last = nodes[nodes.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = overflow; document.removeEventListener('keydown', onKey); previous?.focus(); };
+  }, [menuOpen, isOpen, setIsOpen]);
 
   const runSearch = () => {
     const q = searchQuery.trim();
@@ -45,7 +70,7 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-white mb-4">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex-1 flex justify-start">
-            <button onClick={() => setMenuOpen(true)} className="p-2 hover:bg-gray-50 rounded-lg">
+            <button aria-label="Open menu" aria-expanded={menuOpen} aria-controls="navigation-drawer" onClick={() => setMenuOpen(true)} className="p-2 hover:bg-gray-50 rounded-lg">
               <Menu className="w-5 h-5 text-gray-700" />
             </button>
           </div>
@@ -55,10 +80,10 @@ export default function Header() {
           </Link>
 
           <div className="flex-1 flex justify-end items-center gap-3">
-            <button onClick={() => setSearchOpen(!searchOpen)} className="p-2 hover:bg-gray-50 rounded-lg">
+            <button aria-label="Search products" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)} className="p-2 hover:bg-gray-50 rounded-lg">
               <Search className="w-5 h-5 text-gray-700" />
             </button>
-            <button onClick={() => setIsOpen(true)} className="p-2 hover:bg-gray-50 rounded-lg relative">
+            <button aria-label={`Open cart, ${totalItems} items`} aria-expanded={isOpen} aria-controls="cart-drawer" onClick={() => setIsOpen(true)} className="p-2 hover:bg-gray-50 rounded-lg relative">
               <ShoppingBag className="w-5 h-5 text-gray-700" />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
@@ -72,6 +97,7 @@ export default function Header() {
         {searchOpen && (
           <div className="px-4 pb-3">
             <input
+              aria-label="Search products"
               type="text"
               placeholder="Search products..."
               value={searchQuery}
@@ -86,10 +112,10 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {menuOpen && <div className="mobile-menu-overlay" onClick={() => setMenuOpen(false)} />}
-      <div className={`mobile-menu-panel ${menuOpen ? 'open' : ''}`}>
+      <div id="navigation-drawer" ref={menuRef} role="dialog" aria-modal={menuOpen || undefined} aria-label="Menu" aria-hidden={!menuOpen} className={`mobile-menu-panel ${menuOpen ? 'open' : ''}`}>
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <span className="font-serif text-lg font-semibold">Menu</span>
-          <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-50 rounded-lg"><X className="w-5 h-5" /></button>
+          <button aria-label="Close menu" onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-50 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
         <nav className="p-4">
           <div className="mb-6">
@@ -118,20 +144,17 @@ export default function Header() {
           </div>
           <div className="border-t border-gray-100 pt-4 mt-4">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Subscribe to our newsletter</h3>
-            <div className="flex gap-2 px-3">
-              <input type="email" placeholder="Email" className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-500" />
-              <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800">→</button>
-            </div>
+            <Link href="#newsletter" onClick={() => setMenuOpen(false)} className="block px-3 py-2 text-sm underline">Join the community — get 10% off</Link>
           </div>
         </nav>
       </div>
 
       {/* Cart Drawer */}
       {isOpen && <div className="cart-overlay" onClick={() => setIsOpen(false)} />}
-      <div className={`cart-drawer ${isOpen ? 'open' : ''}`}>
+      <div id="cart-drawer" ref={cartRef} role="dialog" aria-modal={isOpen || undefined} aria-label="Shopping cart" aria-hidden={!isOpen} className={`cart-drawer ${isOpen ? 'open' : ''}`}>
         <div className="p-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
           <span className="font-serif text-lg font-semibold">Your Cart ({totalItems})</span>
-          <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-gray-50 rounded-lg"><X className="w-5 h-5" /></button>
+          <button aria-label="Close cart" onClick={() => setIsOpen(false)} className="p-2 hover:bg-gray-50 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="p-4">
@@ -152,14 +175,14 @@ export default function Header() {
                       <p className="text-xs text-gray-500 mt-1">Size: {item.size}</p>
                       <p className="text-sm font-semibold mt-1">${(item.price / 100).toFixed(2)} USD</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <button onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                        <button aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
                           <Minus className="w-3 h-3" />
                         </button>
                         <span className="text-sm w-6 text-center">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                        <button aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
                           <Plus className="w-3 h-3" />
                         </button>
-                        <button onClick={() => removeItem(item.id, item.size)} className="ml-auto p-1 text-gray-400 hover:text-red-500">
+                        <button aria-label={`Remove ${item.name}`} onClick={() => removeItem(item.id, item.size)} className="ml-auto p-1 text-gray-400 hover:text-red-500">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>

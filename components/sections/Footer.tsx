@@ -166,9 +166,10 @@ export default function Footer() {
                 Get 10% off your first order with code <strong>WELCOME10</strong> when you subscribe.
               </p>
             </div>
-            <form onSubmit={subscribe} className="flex-1 max-w-md w-full">
+            <form id="newsletter" onSubmit={subscribe} className="flex-1 max-w-md w-full">
               <div className="flex border-b border-[#1a1200]/30 pb-1.5">
                 <input
+                  aria-label="Newsletter email address"
                   type="email"
                   required
                   placeholder="Email address"
@@ -181,7 +182,7 @@ export default function Footer() {
                   <ArrowRight size={16} className="text-[#1a1200]/70" />
                 </button>
               </div>
-              {status === 'success' && <p className="text-[11px] text-[#1a1200]/70 mt-2">Welcome! Check your inbox for your code.</p>}
+              {status === 'success' && <p className="text-[11px] text-[#1a1200]/70 mt-2">You’re on the list. Use WELCOME10 for 10% off.</p>}
               {status === 'error' && <p className="text-[11px] text-[#7a1e1e] mt-2">Something went wrong. Please try again.</p>}
             </form>
           </div>
@@ -217,7 +218,7 @@ export default function Footer() {
           </div>
 
           <div className="flex md:justify-end items-center gap-2 flex-wrap">
-            {['Visa', 'Mastercard', 'Amex', 'Apple Pay', 'Google Pay', 'Discover'].map((name) => (
+            {['Visa', 'Mastercard', 'Amex', 'Discover'].map((name) => (
               <span key={name} title={name} className="text-[9px] font-medium tracking-[0.14em] uppercase px-2.5 py-1.5 rounded border border-[#1a1200]/25 text-[#1a1200]/65 bg-[#1a1200]/5">
                 {name}
               </span>

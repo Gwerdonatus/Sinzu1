@@ -27,6 +27,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
+    setLoading(true);
     try {
       setError(null);
       const res = await fetch('/api/products', { cache: 'no-store' });

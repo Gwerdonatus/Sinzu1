@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-white">
@@ -205,14 +207,14 @@ export default function HeroSection() {
           </div>
 
           {/* Headline: bronze rises, then crossfades to deep antique gold */}
-          <div className="headline-wrap mb-5 md:mb-6">
+          <h1 className="headline-wrap mb-5 md:mb-6" aria-label="Beauty by SINZU">
             <span className="headline-base text-[3.5rem] sm:text-5xl md:text-[3.8rem] lg:text-[4.6rem] xl:text-[5.2rem] leading-[0.92]">
               BEAUTY
             </span>
             <span className="headline-gold text-[3.5rem] sm:text-5xl md:text-[3.8rem] lg:text-[4.6rem] xl:text-[5.2rem] leading-[0.92]">
               BEAUTY
             </span>
-          </div>
+          </h1>
 
           <div
             className="w-10 h-[2px] bg-gradient-to-r from-[#a8862a] via-[#e2c471] to-[#a8862a] mb-6 md:mb-8 divider-line mx-auto md:mx-0"
@@ -226,9 +228,9 @@ export default function HeroSection() {
           </p>
 
           <div className="anim-fade" style={{ animationDelay: "1.05s" }}>
-            <button className="font-inter rounded-full bg-[#1a1a1a] text-white px-10 py-3.5 text-[10px] md:text-[11px] font-medium tracking-[0.25em] uppercase hover:bg-[#54400e] transition-colors duration-500">
+            <Link href="/shop" className="inline-block font-inter rounded-full bg-[#1a1a1a] text-white px-10 py-3.5 text-[10px] md:text-[11px] font-medium tracking-[0.25em] uppercase hover:bg-[#54400e] transition-colors duration-500">
               Shop Now
-            </button>
+            </Link>
           </div>
 
           {/* Category anchors — desktop only, so mobile stays identical */}

@@ -24,7 +24,7 @@ function normalize(s: string) {
 }
 
 function ShopInner() {
-  const { products, loading } = useProducts();
+  const { products, loading, error, refresh } = useProducts();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -146,6 +146,7 @@ function ShopInner() {
             <div className="relative bg-white flex items-center rounded-full border border-gray-200">
               <Search className={`absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 transition-all duration-300 ${isFocused ? 'text-black' : 'text-gray-300'}`} />
               <input
+                aria-label="Search products"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -155,7 +156,7 @@ function ShopInner() {
                 className="w-full pl-12 pr-11 py-3 bg-transparent text-sm focus:outline-none font-inter tracking-wide"
               />
               {searchQuery && (
-                <button onClick={clearSearch} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors">
+                <button aria-label="Clear search" onClick={clearSearch} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               )}
@@ -173,6 +174,7 @@ function ShopInner() {
           {TABS.map((t) => (
             <button
               key={t.id}
+              aria-pressed={activeTab === t.id}
               onClick={() => setTab(t.id)}
               className={`shop-tab ${activeTab === t.id ? 'active' : ''}`}
             >
@@ -182,7 +184,7 @@ function ShopInner() {
         </div>
 
         {/* Product Grid */}
-        {loading ? (
+        {error ? (<div role="alert" className="text-center py-16"><p className="text-gray-700">We couldn’t load the collection.</p><button onClick={refresh} className="underline mt-4">Try again</button></div>) : loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {[...Array(8)].map((_, i) => (
               <div key={i}>
@@ -202,19 +204,13 @@ function ShopInner() {
         ) : (
           <div className="text-center py-24 motion-fade-in">
             <p className="text-gray-400 text-sm mb-4">No products found in this collection.</p>
-            <button onClick={() => { clearSearch(); setTab('all'); }} className="text-sm underline text-black hover:text-black/60">
+            <button onClick={() => { setSearchQuery(''); setActiveTab('all'); router.replace('/shop', { scroll: false }); }} className="text-sm underline text-black hover:text-black/60">
               Clear filters
             </button>
           </div>
         )}
 
-        {/* Empty catalog notice — only if truly empty */}
-        {!loading && products.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-gray-500 text-sm mb-2">Our catalog is being restocked.</p>
-            <p className="text-xs text-gray-400">Check back soon. New products are on the way.</p>
-          </div>
-        )}
+
       </div>
 
       <ChatWidget />

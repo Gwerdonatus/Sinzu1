@@ -7,7 +7,7 @@ import { useProducts, ProductGridSkeleton } from '@/hooks/useProducts';
 import Link from 'next/link';
 
 export default function CollectionPageClient({ category }: { category: string }) {
-  const { products, loading, getSaleProducts, getProductsByCategory } = useProducts();
+  const { products, loading, error, refresh, getSaleProducts, getProductsByCategory } = useProducts();
 
   const decoded = decodeURIComponent(category);
   let filtered = products;
@@ -20,7 +20,7 @@ export default function CollectionPageClient({ category }: { category: string })
     const flagged = products.filter((p) => p.badge === 'Best Seller');
     filtered = flagged.length ? flagged : products.slice(0, 12);
     title = 'Best Sellers';
-  } else if (decoded) {
+  } else if (decoded && decoded !== 'all') {
     filtered = getProductsByCategory(decoded);
     title = decoded.charAt(0).toUpperCase() + decoded.slice(1).replace('-', ' ');
   }
@@ -39,7 +39,7 @@ export default function CollectionPageClient({ category }: { category: string })
         {!loading && (
           <p className="text-sm text-gray-500 text-center mb-6">{filtered.length} products</p>
         )}
-        {loading ? (
+        {error ? (<div role="alert" className="text-center py-12"><p>We couldn’t load the collection. Please try again.</p><button onClick={refresh} className="underline mt-4">Try again</button></div>) : loading ? (
           <ProductGridSkeleton count={8} />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -48,7 +48,7 @@ export default function CollectionPageClient({ category }: { category: string })
             ))}
           </div>
         )}
-        {!loading && filtered.length === 0 && (
+        {!loading && !error && filtered.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No products found.</p>
           </div>

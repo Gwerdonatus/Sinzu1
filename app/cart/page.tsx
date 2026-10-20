@@ -41,14 +41,14 @@ export default function CartPage() {
                     <p className="text-xs text-gray-500 mt-1">Size: {item.size}</p>
                     <p className="text-sm font-semibold mt-1">${(item.price / 100).toFixed(2)} USD</p>
                     <div className="flex items-center gap-2 mt-3">
-                      <button onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                      <button aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
                         <Minus className="w-3 h-3" />
                       </button>
                       <span className="text-sm w-8 text-center font-medium">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
+                      <button aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center hover:bg-gray-50">
                         <Plus className="w-3 h-3" />
                       </button>
-                      <button onClick={() => removeItem(item.id, item.size)} className="ml-auto p-2 text-gray-400 hover:text-red-500">
+                      <button aria-label={`Remove ${item.name}`} onClick={() => removeItem(item.id, item.size)} className="ml-auto p-2 text-gray-400 hover:text-red-500">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>

@@ -200,6 +200,7 @@ export default function CheckoutPage() {
   };
 
   const handlePayment = useCallback(async () => {
+    if (loading) return;
     if (!card) {
       setError('Payment system not ready. Please wait a moment.');
       return;
@@ -239,7 +240,7 @@ export default function CheckoutPage() {
 
       const data = await response.json();
 
-      if (!response.ok || data.error) {
+      if (!response.ok || data.error || data.success !== true || data.status !== 'COMPLETED') {
         setError(data.error || 'Payment failed. Please try again.');
         setLoading(false);
         return;
@@ -266,7 +267,7 @@ export default function CheckoutPage() {
     } finally {
       setLoading(false);
     }
-  }, [card, items, shippingMethodId, addr, clearCart, appliedDiscount]);
+  }, [card, items, shippingMethodId, addr, clearCart, appliedDiscount, loading]);
 
   if (items.length === 0 && !success) {
     return (
@@ -528,7 +529,7 @@ export default function CheckoutPage() {
                 <div className="flex gap-2">
                   <input
                     className={`${inputClass} flex-1 uppercase`}
-                    placeholder="Discount code"
+                    aria-label="Discount code" placeholder="Discount code"
                     value={discountInput}
                     onChange={(e) => { setDiscountInput(e.target.value); setDiscountError(''); }}
                     onKeyDown={(e) => e.key === 'Enter' && applyDiscount()}
@@ -572,18 +573,18 @@ export default function CheckoutPage() {
                 </p>
               )}
               <div className="grid grid-cols-2 gap-3">
-                <input className={inputClass} placeholder="First name *" value={addr.firstName} onChange={setField('firstName')} autoComplete="given-name" />
-                <input className={inputClass} placeholder="Last name *" value={addr.lastName} onChange={setField('lastName')} autoComplete="family-name" />
-                <input className={`${inputClass} col-span-2`} type="email" placeholder="Email *" value={addr.email} onChange={setField('email')} autoComplete="email" />
+                <input className={inputClass} aria-label="First name *" placeholder="First name *" value={addr.firstName} onChange={setField('firstName')} autoComplete="given-name" />
+                <input className={inputClass} aria-label="Last name *" placeholder="Last name *" value={addr.lastName} onChange={setField('lastName')} autoComplete="family-name" />
+                <input className={`${inputClass} col-span-2`} type="email" aria-label="Email *" placeholder="Email *" value={addr.email} onChange={setField('email')} autoComplete="email" />
                 <input className={`${inputClass} col-span-2`} type="tel" placeholder={isPickup ? "Phone * (we'll text when ready)" : "Phone (optional)"} value={addr.phone} onChange={setField('phone')} autoComplete="tel" />
                 {!isPickup && (
                   <>
-                    <input className={`${inputClass} col-span-2`} placeholder="Street address *" value={addr.addressLine1} onChange={setField('addressLine1')} autoComplete="address-line1" />
-                    <input className={`${inputClass} col-span-2`} placeholder="Apartment, suite, etc. (optional)" value={addr.addressLine2} onChange={setField('addressLine2')} autoComplete="address-line2" />
-                    <input className={inputClass} placeholder="City *" value={addr.city} onChange={setField('city')} autoComplete="address-level2" />
-                    <input className={inputClass} placeholder="State / Province *" value={addr.state} onChange={setField('state')} autoComplete="address-level1" />
-                    <input className={inputClass} placeholder="Postal code *" value={addr.postalCode} onChange={setField('postalCode')} autoComplete="postal-code" />
-                    <input className={inputClass} placeholder="Country (e.g. US) *" value={addr.country} onChange={setField('country')} maxLength={2} autoComplete="country" />
+                    <input className={`${inputClass} col-span-2`} aria-label="Street address *" placeholder="Street address *" value={addr.addressLine1} onChange={setField('addressLine1')} autoComplete="address-line1" />
+                    <input className={`${inputClass} col-span-2`} aria-label="Apartment, suite, etc. (optional)" placeholder="Apartment, suite, etc. (optional)" value={addr.addressLine2} onChange={setField('addressLine2')} autoComplete="address-line2" />
+                    <input className={inputClass} aria-label="City *" placeholder="City *" value={addr.city} onChange={setField('city')} autoComplete="address-level2" />
+                    <input className={inputClass} aria-label="State / Province *" placeholder="State / Province *" value={addr.state} onChange={setField('state')} autoComplete="address-level1" />
+                    <input className={inputClass} aria-label="Postal code *" placeholder="Postal code *" value={addr.postalCode} onChange={setField('postalCode')} autoComplete="postal-code" />
+                    <select className={inputClass} aria-label="Country" value="US" autoComplete="country"><option value="US">United States</option></select>
                   </>
                 )}
               </div>

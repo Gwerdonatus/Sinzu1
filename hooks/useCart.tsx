@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { CartItem } from '@/types';
 
 interface CartContextType {
@@ -19,6 +19,17 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('sinzu-cart-v1') || '[]');
+      if (Array.isArray(saved)) setItems(saved.filter((i) => i && typeof i.id === 'string' && typeof i.variantId === 'string' && typeof i.name === 'string' && typeof i.size === 'string' && typeof i.image === 'string' && Number.isSafeInteger(i.price) && i.price >= 0 && Number.isSafeInteger(i.quantity) && i.quantity > 0));
+    } catch { /* A corrupt or unavailable browser store starts an empty cart. */ }
+    setHydrated(true);
+  }, []);
+  useEffect(() => {
+    if (hydrated) { try { localStorage.setItem('sinzu-cart-v1', JSON.stringify(items)); } catch { /* Shopping still works without storage. */ } }
+  }, [items, hydrated]);
   const [isOpen, setIsOpen] = useState(false);
 
   const addItem = useCallback((newItem: CartItem) => {

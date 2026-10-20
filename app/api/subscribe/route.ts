@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     // Fire welcome email in background — don't block the response.
     const welcome = welcomeEmail();
-    sendEmail({ to: email, ...welcome }).catch((e) =>
+    await sendEmail({ to: email, ...welcome }).catch((e) =>
       console.error('[welcome-email] failed:', e)
     );
 

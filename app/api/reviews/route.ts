@@ -121,7 +121,8 @@ export async function POST(request: NextRequest) {
       content: content.trim(),
     });
 
-    await sendEmail({ to: OWNER_EMAIL, ...email, replyTo: reviewerEmail });
+    const sent = await sendEmail({ to: OWNER_EMAIL, ...email, replyTo: reviewerEmail });
+    if (!sent.ok) return NextResponse.json({ error: "Could not deliver your review. Please try again later." }, { status: 503 });
 
     return NextResponse.json({ ok: true, moderated: true });
   } catch (e: any) {

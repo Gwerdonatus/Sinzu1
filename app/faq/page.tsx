@@ -19,7 +19,7 @@ const SECTIONS: { title: string; items: QA[] }[] = [
       },
       {
         q: 'Do you offer local pickup?',
-        a: 'Yes! If you\'re in the area, you can select local pickup at our Mall of America kiosk when available.',
+        a: 'Yes! If you\'re in the area, you can select local pickup at our Northtown Mall location. Checkout shows the available pickup option.',
       },
       {
         q: 'Do you ship nationwide?',
@@ -116,6 +116,7 @@ function AccordionItem({ q, a }: QA) {
       </button>
       <div
         className="grid overflow-hidden transition-all duration-500"
+        aria-hidden={!open}
         style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
       >
         <div className="overflow-hidden">

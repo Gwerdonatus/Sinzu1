@@ -601,11 +601,11 @@ export default function AboutPage() {
               <ArrowRight className="w-4 h-4 relative z-10" strokeWidth={1.5} />
             </button>
             <button
-              onClick={() => router.push('/journal')}
+              onClick={() => router.push('/visit')}
               className="inline-flex items-center gap-2 px-10 py-4 text-[0.65rem] tracking-[0.18em] uppercase text-white/50 hover:text-white transition-colors cursor-pointer font-medium"
             >
               <BookOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
-              Read the Journal
+              Visit Our Stores
             </button>
           </div>
         </div>

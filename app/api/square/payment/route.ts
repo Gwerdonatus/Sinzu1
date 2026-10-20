@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+import { normalizeCheckoutItems } from '@/lib/checkout-validation';
 import { ordersApi, paymentsApi, LOCATION_ID } from '@/lib/square';
 import { fetchProducts } from '@/lib/catalog';
 import { calcShippingCost, getShippingMethod } from '@/lib/shipping';
@@ -15,7 +16,7 @@ interface CheckoutItem {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { sourceId, items, shippingMethodId, shippingAddress, discountCode } = body as {
+    const { sourceId, items: rawItems, shippingMethodId, shippingAddress, discountCode } = body as {
       sourceId: string;
       items: CheckoutItem[];
       shippingMethodId: string;
@@ -34,25 +35,29 @@ export async function POST(request: NextRequest) {
       discountCode?: string;
     };
 
-    if (!sourceId) {
+    if (typeof sourceId !== 'string' || !sourceId.trim()) {
       return NextResponse.json({ error: 'Missing payment token' }, { status: 400 });
     }
-    if (!Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
-    }
+    let items: CheckoutItem[];
+    try { items = normalizeCheckoutItems(rawItems); }
+    catch (error) { return NextResponse.json({ error: (error as Error).message }, { status: 400 }); }
+    if (discountCode !== undefined && typeof discountCode !== 'string') return NextResponse.json({ error: 'Invalid discount code' }, { status: 400 });
     const method = getShippingMethod(shippingMethodId);
     if (!method) {
       return NextResponse.json({ error: 'Invalid shipping method' }, { status: 400 });
     }
     const requiredAddr = method.kind === 'PICKUP'
-      ? (['firstName', 'lastName', 'email'] as const)
+      ? (['firstName', 'lastName', 'email', 'phone'] as const)
       : (['firstName', 'lastName', 'email', 'addressLine1', 'city', 'state', 'postalCode', 'country'] as const);
     for (const field of requiredAddr) {
-      if (!shippingAddress?.[field]?.trim()) {
+      if (typeof shippingAddress?.[field] !== 'string' || !shippingAddress[field]!.trim()) {
         return NextResponse.json({ error: `Missing field: ${field}` }, { status: 400 });
       }
     }
 
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(shippingAddress.email)) return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+    if (method.kind === 'SHIPMENT' && shippingAddress.country.trim().toUpperCase() !== 'US') return NextResponse.json({ error: 'Shipping is currently available within the United States only' }, { status: 400 });
+    shippingAddress.country = 'US';
     const catalog = await fetchProducts(true);
     const variationLookup = new Map<string, { price: number; inventory: number; itemName: string; varName: string }>();
     for (const p of catalog) {
@@ -210,6 +215,9 @@ export async function POST(request: NextRequest) {
     });
 
     const payment = paymentResult.payment;
+    if (!payment || payment.status !== 'COMPLETED') {
+      return NextResponse.json({ error: 'Payment has not completed. Please contact support before retrying.', orderId: order.id, status: payment?.status }, { status: 409 });
+    }
     let emailed = false;
 
     if (payment?.status === 'COMPLETED' || payment?.status === 'APPROVED') {
@@ -285,7 +293,7 @@ export async function POST(request: NextRequest) {
     console.error('Square payment error:', error);
     const squareMessage = error?.result?.errors?.[0]?.detail || error?.errors?.[0]?.detail;
     return NextResponse.json(
-      { error: squareMessage || error.message || 'Payment processing failed' },
+      { error: 'We could not complete the payment. Please contact support if you are unsure whether a payment went through.' },
       { status: 500 }
     );
   }

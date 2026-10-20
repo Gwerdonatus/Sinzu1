@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { normalizeCheckoutItems } from '@/lib/checkout-validation';
 import { computeDiscount } from '@/lib/discounts';
 import { fetchProducts } from '@/lib/catalog';
 
@@ -10,15 +11,15 @@ export const dynamic = 'force-dynamic';
 // new total live in the UI.
 export async function POST(request: NextRequest) {
   try {
-    const { code, items } = await request.json() as {
+    const { code, items: rawItems } = await request.json() as {
       code: string;
       items: { variationId: string; quantity: number }[];
     };
 
-    if (!code) return NextResponse.json({ error: 'Enter a discount code' }, { status: 400 });
-    if (!Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: 'Your cart is empty' }, { status: 400 });
-    }
+    if (typeof code !== 'string' || !code.trim()) return NextResponse.json({ error: 'Enter a discount code' }, { status: 400 });
+    let items;
+    try { items = normalizeCheckoutItems(rawItems); }
+    catch (error) { return NextResponse.json({ error: (error as Error).message }, { status: 400 }); }
 
     // Re-price from live Square catalog (same source the payment route uses).
     const catalog = await fetchProducts();

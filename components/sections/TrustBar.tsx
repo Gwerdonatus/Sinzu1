@@ -27,7 +27,7 @@ const ITEMS = [
   {
     icon: Shield,
     title: 'Secure Checkout',
-    body: 'Powered by Square · Apple Pay & all major cards',
+    body: 'Powered by Square · All major cards',
   },
   {
     icon: HeadphonesIcon,

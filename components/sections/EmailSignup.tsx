@@ -270,7 +270,8 @@ export default function EmailSignup() {
 
         <form className="su-form anim-fade-up anim-d3" onSubmit={submit}>
           <input
-            type="email"
+            aria-label="Newsletter email address"
+                  type="email"
             required
             autoComplete="email"
             placeholder="Your email address"

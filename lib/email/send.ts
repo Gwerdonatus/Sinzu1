@@ -34,7 +34,7 @@ export interface SendEmailArgs {
 export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; error?: string }> {
   if (!resend) {
     console.log('[email:disabled]', args.subject, '→', args.to);
-    return { ok: true };
+    return { ok: false, error: 'Email service is not configured' };
   }
   try {
     const { data, error } = await resend.emails.send({

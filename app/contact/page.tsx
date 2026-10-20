@@ -34,7 +34,7 @@ const FAQS = [
   },
   {
     q: 'What is your return policy?',
-    a: 'Unopened products can be returned within 14 days of delivery for a full refund. For hygiene reasons, opened skincare and haircare products cannot be returned. Jewelry can be exchanged within 14 days if unworn.',
+    a: 'Unworn jewelry in its original packaging may be returned within 14 days of delivery. Skincare products are non-returnable, opened or unopened. See our Returns & Refunds page for the full policy.',
   },
   {
     q: 'Do you restock sold-out items?',
@@ -363,23 +363,24 @@ export default function ContactPage() {
               Send a Message
             </h2>
 
-            <div className="flex flex-col gap-5">
+            <form onSubmit={(event) => { event.preventDefault(); handleSubmit(); }} className="flex flex-col gap-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <input
                   className={inputClass}
-                  placeholder="Your name"
+                  aria-label="Your name" required placeholder="Your name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
                 <input
                   className={inputClass}
                   type="email"
-                  placeholder="Your email"
+                  aria-label="Your email" required placeholder="Your email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                 />
               </div>
               <select
+                aria-label="Message topic"
                 className={`${inputClass} cursor-pointer`}
                 value={form.topic}
                 onChange={(e) => setForm({ ...form, topic: e.target.value })}
@@ -393,13 +394,13 @@ export default function ContactPage() {
               </select>
               <textarea
                 className={`${inputClass} min-h-[160px] resize-y`}
-                placeholder="How can we help?"
+                aria-label="How can we help?" required placeholder="How can we help?"
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
               />
               <div>
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
                   className="btn-dark inline-flex items-center gap-3 px-10 py-4 border border-[#1A1A1A] rounded-full text-[11px] tracking-[0.18em] uppercase text-[#1A1A1A] cursor-pointer font-medium bg-white"
                 >
                   <span className="relative z-10">Send Message</span>
@@ -409,7 +410,7 @@ export default function ContactPage() {
                   Opens your email app with everything filled in, or write us directly at info@sinzullc.com.
                 </p>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>

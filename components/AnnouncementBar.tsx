@@ -83,13 +83,15 @@ export default function AnnouncementBar() {
           font-size:11px;
           letter-spacing:0.12em;
           text-transform:uppercase;
-          white-space:nowrap;
+          white-space:normal;
         }
         .ab-message{
           display:inline-flex;
           align-items:center;
+          justify-content:center;
+          flex-wrap:wrap;
           gap:0.5em;
-          line-height:1;
+          line-height:1.4;
         }
         .ab-gold{
           background:linear-gradient(90deg,#c9a227 0%,#f5e7a3 50%,#c9a227 100%);

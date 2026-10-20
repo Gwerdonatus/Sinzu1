@@ -14,7 +14,7 @@ import { ChevronLeft, ChevronRight, Share2, Minus, Plus, ShoppingBag, Check, Ale
 import Link from 'next/link';
 
 export default function ProductPageClient({ id }: { id: string }) {
-  const { products, loading, getProductById } = useProducts();
+  const { products, loading, error, refresh, getProductById } = useProducts();
   const product = getProductById(decodeURIComponent(id));
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -47,6 +47,8 @@ export default function ProductPageClient({ id }: { id: string }) {
       </div>
     </main>
   );
+
+  if (error) return (<main className="min-h-screen bg-white"><AnnouncementBar /><Header /><div role="alert" className="text-center py-24"><p>We couldn’t load this product.</p><button onClick={refresh} className="underline mt-4">Try again</button></div></main>);
 
   if (!product) return (
     <main className="min-h-screen bg-white">
